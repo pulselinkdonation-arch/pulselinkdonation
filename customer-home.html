@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Link | Customer (Donor) Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+            color: #ffffff;
+            background-color: #0b0e14;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-wall {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 22%, rgba(185, 28, 38, 0.25) 0%, rgba(20, 12, 18, 0.22) 40%, rgba(8, 11, 17, 0.88) 78%),
+                radial-gradient(circle at 10% 70%, rgba(170, 24, 34, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 90% 50%, rgba(92, 118, 148, 0.18) 0%, transparent 46%),
+                linear-gradient(125deg, #0f0b10 0%, #141922 48%, #1b222e 100%);
+        }
+
+        .live-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: min(390px, calc(100vw - 32px));
+            background: linear-gradient(135deg, rgba(159, 18, 57, 0.96) 0%, rgba(24, 10, 18, 0.98) 100%);
+            border: 1.5px solid #ff5a67;
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 18px 46px rgba(225, 29, 72, 0.52);
+            display: none;
+            animation: slideInToast 0.35s ease;
+        }
+
+        .live-toast.show { display: block; }
+
+        @keyframes slideInToast {
+            from { opacity: 0; transform: translateY(-18px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .toast-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #ffd7da;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .toast-body {
+            font-size: 13px;
+            color: #f8fafc;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 0 24px 56px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px 0 18px;
+            border-bottom: 1px solid rgba(255, 82, 94, 0.22);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 2.6px;
+            background: linear-gradient(180deg, #ff9a9a 0%, #ff5757 52%, #e62e3d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255, 62, 72, 0.8));
+        }
+
+        .brand-heart-svg {
+            width: 42px;
+            height: 32px;
+            filter: drop-shadow(0 0 8px rgba(255, 60, 72, 0.85));
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: rgba(236, 240, 248, 0.86);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: #ff6b74; }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 8px 14px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            background: rgba(16, 20, 28, 0.72);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            border-color: #ff6b74;
+            background: rgba(165, 32, 44, 0.35);
+        }
+
+        .profile-hero {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(42, 48, 62, 0.48) 0%, rgba(17, 20, 28, 0.82) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            padding: 22px 24px;
+            margin-bottom: 26px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-hero .glass-card { margin-bottom: 0; }
+
+        .glass-card.crimson-glow {
+            border-color: rgba(255, 92, 102, 0.48);
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 48, 64, 0.14);
+        }
+
+        .donor-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .blood-orb {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff6b74, #be123c 70%, #7f1d1d 100%);
+            border: 2px solid #fda4af;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px rgba(225, 29, 72, 0.55);
+            flex-shrink: 0;
+        }
+
+        .blood-orb strong { font-size: 24px; font-weight: 800; line-height: 1; }
+        .blood-orb small { font-size: 9.5px; letter-spacing: 0.6px; opacity: 0.9; margin-top: 2px; }
+
+        .donor-info h1 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+        .donor-info h1 span { color: #ff6b74; }
+        .donor-info p { font-size: 13px; color: #cbd5e1; line-height: 1.5; margin-bottom: 10px; }
+
+        .donor-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .info-chip {
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            color: #f1f5f9;
+        }
+
+        .info-chip.highlight {
+            background: rgba(22, 163, 74, 0.22);
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .helpline-card h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffd7da;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .helpline-number-big {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 10px;
+            text-shadow: 0 0 14px rgba(255, 72, 84, 0.7);
+        }
+
+        .helpline-mini-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+        .mini-call {
+            padding: 7px 12px;
+            border-radius: 8px;
+            background: rgba(225, 29, 72, 0.22);
+            border: 1px solid rgba(255, 100, 110, 0.5);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .avail-btn {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 9px;
+            border: 1.5px solid #22c55e;
+            background: rgba(22, 163, 74, 0.2);
+            color: #bbf7d0;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .avail-btn.offline {
+            border-color: #94a3b8;
+            background: rgba(100, 116, 139, 0.2);
+            color: #cbd5e1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .stat-box {
+            background: rgba(24, 29, 40, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 12px;
+            padding: 15px 18px;
+        }
+
+        .stat-box small {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 5px;
+        }
+
+        .stat-box strong { font-size: 25px; font-weight: 800; }
+        .stat-box strong.red { color: #ff6b74; }
+        .stat-box strong.green { color: #4ade80; }
+        .stat-box strong.blue { color: #7dd3fc; }
+
+        .section-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 17.5px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+        .filter-btn {
+            padding: 8px 13px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+            color: #e2e8f0;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            border-color: #ff5a67;
+            background: rgba(225, 29, 72, 0.34);
+            color: #ffffff;
+        }
+
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .alert-card {
+            background: rgba(14, 18, 26, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 13px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .alert-card.urgent { border-top: 3px solid #ff5a67; }
+        .alert-card.accepted { border-top: 3px solid #22c55e; }
+        .alert-card.courier { border-top: 3px solid #38bdf8; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .blood-chip {
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: rgba(225, 29, 72, 0.26);
+            border: 1px solid #ff5a67;
+            color: #ffccd0;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .match-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+
+        .urgency-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid #f59e0b;
+        }
+
+        .verify-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 12.8px;
+            line-height: 1.65;
+            color: #e2e8f0;
+        }
+
+        .verify-box h4 {
+            color: #7dd3fc;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .unlocked-box {
+            background: rgba(22, 163, 74, 0.14);
+            border: 1px solid rgba(74, 222, 128, 0.48);
+            border-radius: 10px;
+            padding: 13px 14px;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .unlocked-box h4 { color: #4ade80; font-size: 13.5px; margin-bottom: 5px; }
+
+        .bill-share-bar {
+            background: rgba(14, 165, 233, 0.14);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 9px;
+            padding: 9px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12.5px;
+        }
+
+        .courier-box {
+            margin-top: 8px;
+            background: rgba(14, 165, 233, 0.14);
+            border: 1px solid rgba(56, 189, 248, 0.48);
+            border-radius: 9px;
+            padding: 11px 13px;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn-accept {
+            flex: 1;
+            padding: 11px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 130, 138, 0.65);
+            background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            padding: 8px 13px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-action.green {
+            background: rgba(22, 163, 74, 0.28);
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .btn-action.blue {
+            background: rgba(14, 165, 233, 0.24);
+            border-color: #38bdf8;
+            color: #bae6fd;
+        }
+
+        .history-table-wrap { overflow-x: auto; }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 11px 12px;
+            background: rgba(225, 29, 72, 0.18);
+            color: #ffd7da;
+            border-bottom: 1.5px solid rgba(255, 90, 103, 0.4);
+            font-weight: 700;
+        }
+
+        .history-table td {
+            padding: 11px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        .centers-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .cyber-input,
+        .cyber-select {
+            padding: 10px 13px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            background: rgba(14, 18, 26, 0.85);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .cyber-input { flex: 1; min-width: 220px; }
+        .cyber-select option { background: #161b24; color: #ffffff; }
+
+        .centers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .center-card {
+            background: rgba(14, 18, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .center-card:hover {
+            transform: translateY(-3px);
+            border-color: #ff636e;
+            box-shadow: 0 10px 24px rgba(225, 29, 72, 0.24);
+        }
+
+        .center-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .center-card h4 { font-size: 14.5px; font-weight: 700; color: #ffffff; line-height: 1.35; }
+
+        .km-badge {
+            flex-shrink: 0;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid #38bdf8;
+            color: #bae6fd;
+            font-size: 11.5px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .center-addr { font-size: 12.5px; color: #94a3b8; line-height: 1.5; }
+
+        .center-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fda4af;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 28px 16px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-hero { grid-template-columns: 1fr; }
+            .centers-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 780px) {
+            .alerts-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 14px 40px; }
+            .stats-grid, .centers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-wall" aria-hidden="true"></div>
+
+    <!-- LIVE EMERGENCY NOTIFICATION TOAST -->
+    <div class="live-toast" id="live-toast">
+        <div class="toast-head">
+            <span class="toast-title">🚨 Live Patient Blood Alert!</span>
+            <button type="button" class="toast-close" onclick="closeLiveToast()">×</button>
+        </div>
+        <div class="toast-body" id="toast-body-text"></div>
+        <a href="#live-alerts" class="btn-action green" style="display:inline-block;" onclick="closeLiveToast()">Verify & Accept Request →</a>
+    </div>
+
+    <div class="container">
+        <!-- TOP NAVBAR -->
+        <header class="navbar">
+            <a href="index.html" class="brand-logo">
+                <span class="brand-text">PULSE LINK</span>
+                <svg class="brand-heart-svg" viewBox="0 0 64 46" fill="none">
+                    <path d="M27 40 C 27 40, 8 27, 8 15 C 8 8.5, 13.5 4, 19.5 5.5 C 23 6.4, 25.5 9, 27 11.5 C 28.5 9, 31 6.4, 34.5 5.5 C 40.5 4, 46 8.5, 46 15 C 46 27, 27 40, 27 40 Z" fill="#ff4d57" />
+                    <path d="M2 23 L 15 23 L 19 16 L 23 30 L 28 11 L 33 28 L 37 21 L 41 23 L 52 23" stroke="#180a0d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#live-alerts">Live Alerts</a></li>
+                <li><a href="#my-missions">Accepted Missions & Bills</a></li>
+                <li><a href="#donation-history">My Donations</a></li>
+                <li><a href="#vizag-centers">Vizag Blood Banks</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="patient-home.html" target="_blank" class="nav-btn">Open Patient Tab ↗</a>
+                <button type="button" class="nav-btn" onclick="logoutUser()">Logout</button>
+            </div>
+        </header>
+
+        <!-- CUSTOMER PROFILE & PULSE LINK WEBSITE HELPLINE -->
+        <section class="profile-hero">
+            <div class="glass-card crimson-glow">
+                <div class="donor-profile-row">
+                    <div class="blood-orb">
+                        <strong id="profile-blood">O+</strong>
+                        <small>GROUP</small>
+                    </div>
+                    <div class="donor-info">
+                        <h1>Welcome, <span id="profile-name">Verified Donor</span></h1>
+                        <p id="profile-sub">Registered Pulse Link Blood Donor • Ready for Live Patient Alerts</p>
+                        <div class="donor-chips">
+                            <span class="info-chip highlight" id="profile-count-chip">🩸 Total Donations: 0 Times</span>
+                            <span class="info-chip" id="profile-location-chip">📍 Visakhapatnam</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card helpline-card">
+                <h3>📞 Pulse Link 24×7 Website Helpline</h3>
+                <a href="tel:18001087857" class="helpline-number-big">☎️ 1800-108-7857</a>
+                <div class="helpline-mini-row">
+                    <a href="tel:104" class="mini-call">🩸 Blood Helpline: 104</a>
+                    <a href="tel:108" class="mini-call">🚑 Ambulance: 108</a>
+                </div>
+                <button type="button" class="avail-btn" id="avail-toggle" onclick="toggleAvailability()">
+                    🟢 Available to Donate (Live Alerts ON)
+                </button>
+            </div>
+        </section>
+
+        <!-- LIVE STATS -->
+        <section class="stats-grid">
+            <div class="stat-box">
+                <small>Live Patient Alerts</small>
+                <strong class="red" id="stat-open">0</strong>
+            </div>
+            <div class="stat-box">
+                <small>Matching My Blood Group</small>
+                <strong class="green" id="stat-match">0</strong>
+            </div>
+            <div class="stat-box">
+                <small>Active Accepted Missions</small>
+                <strong class="blue" id="stat-mine">0</strong>
+            </div>
+            <div class="stat-box">
+                <small>Total Times Donated</small>
+                <strong id="stat-donated">0</strong>
+            </div>
+        </section>
+
+        <!-- LIVE PATIENT EMERGENCY NOTIFICATIONS (FULL PATIENT DETAILS FOR VERIFICATION) -->
+        <section class="glass-card crimson-glow" id="live-alerts">
+            <div class="section-top">
+                <h2 class="section-title">🔔 Live Patient Blood Notifications (Verify & Accept)</h2>
+                <div class="filter-row">
+                    <button type="button" class="filter-btn active" id="filter-all" onclick="setFilter('all')">All Blood Groups</button>
+                    <button type="button" class="filter-btn" id="filter-mine" onclick="setFilter('match')">Only My Blood Group</button>
+                    <button type="button" class="filter-btn" onclick="renderDashboard()">↻ Refresh</button>
+                </div>
+            </div>
+            <div class="alerts-grid" id="open-alerts-grid"></div>
+        </section>
+
+        <!-- ACCEPTED MISSIONS, PATIENT PAYMENT PDF BILL & DELIVERY RIDER -->
+        <section class="glass-card" id="my-missions">
+            <div class="section-top">
+                <h2 class="section-title">✅ Accepted Donations, Patient Payment Bills & Delivery</h2>
+            </div>
+            <div class="alerts-grid" id="accepted-missions-grid"></div>
+        </section>
+
+        <!-- CUSTOMER DONATION HISTORY -->
+        <section class="glass-card" id="donation-history">
+            <div class="section-top">
+                <h2 class="section-title">🩸 My Blood Donation History</h2>
+                <button type="button" class="btn-action green" onclick="addManualDonation()">+ Record Past Donation</button>
+            </div>
+            <div class="history-table-wrap">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Blood Group</th>
+                            <th>Hospital / Blood Bank</th>
+                            <th>Patient / Recipient</th>
+                            <th>Mode</th>
+                        </tr>
+                    </thead>
+                    <tbody id="donation-history-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VISAKHAPATNAM & GAJUWAKA BLOOD DONATION CENTERS WITH KM DISTANCE & GOOGLE MAPS -->
+        <section class="glass-card" id="vizag-centers">
+            <div class="section-top">
+                <h2 class="section-title">🏥 Visakhapatnam & Gajuwaka Blood Donation Centers</h2>
+                <span style="font-size:12.5px; color:#94a3b8;">Click any blood bank to open directions in Google Maps</span>
+            </div>
+
+            <div class="centers-controls">
+                <input type="text" id="center-search" class="cyber-input" placeholder="Search blood bank (e.g. Vande Bharat, Gajuwaka, KGH, Red Cross)..." oninput="renderBloodCenters()">
+                <select id="area-origin" class="cyber-select" onchange="changeOriginArea()">
+                    <option value="17.6868,83.2089">Distance From: Gajuwaka (Default)</option>
+                    <option value="17.6745,83.1865">Distance From: Vadlapudi</option>
+                    <option value="17.6801,83.1748">Distance From: Kurmannapalem</option>
+                    <option value="17.7447,83.2314">Distance From: NAD Junction</option>
+                    <option value="17.7115,83.3075">Distance From: Maharanipeta / KGH</option>
+                    <option value="17.7231,83.3012">Distance From: Dwaraka Nagar</option>
+                    <option value="17.7418,83.3340">Distance From: MVP Colony</option>
+                    <option value="17.7924,83.3548">Distance From: Madhurawada</option>
+                </select>
+                <button type="button" class="btn-action blue" onclick="useLiveGPS()">📍 Use My Live GPS</button>
+            </div>
+
+            <div class="centers-grid" id="blood-centers-grid"></div>
+        </section>
+    </div>
+
+    <script>
+        const VIZAG_BLOOD_CENTERS = [
+            { name: "Vande Bharat Blood Centre", area: "Old Gajuwaka", address: "Opposite Lifestyle, Chinagantyada, Old Gajuwaka, Visakhapatnam - 530026", phone: "6262172737", lat: 17.6868, lng: 83.2089 },
+            { name: "Visakha Voluntary Blood Bank", area: "Old Gajuwaka Junction", address: "1st Floor, Krishna Arcade, Old Gajuwaka Junction, Gajuwaka, Visakhapatnam - 530026", phone: "0891-2514444", lat: 17.6881, lng: 83.2095 },
+            { name: "Amma Blood Centre", area: "Gajuwaka", address: "Kaniti Road, Near Vantillu Junction, Beside Sai Priya Function Hall, Gajuwaka - 530026", phone: "0891-2512233", lat: 17.6812, lng: 83.1995 },
+            { name: "Sanjeevani Voluntary Blood Bank", area: "Gajuwaka", address: "Kaniti Road, Opposite SFS School, Gajuwaka, Visakhapatnam - 530026", phone: "0891-2516677", lat: 17.6820, lng: 83.1980 },
+            { name: "KIMS ICON Blood Centre", area: "Sheela Nagar, Gajuwaka", address: "D.No. 32-11-2, KIMS ICON Hospital, Sheela Nagar, Gajuwaka, Visakhapatnam - 530012", phone: "0891-6799999", lat: 17.7126, lng: 83.1924 },
+            { name: "Visakha Steel General Hospital Blood Bank", area: "Ukkunagaram, Steel Plant", address: "First Floor, Sector 6, Ukkunagaram, Visakhapatnam Steel Plant - 530032", phone: "0891-2887722", lat: 17.6485, lng: 83.1670 },
+            { name: "INHS Kalyani Blood Bank", area: "Gandhigram, Gajuwaka", address: "INHS Kalyani Naval Hospital, Gandhigram, Visakhapatnam - 530005", phone: "0891-2814028", lat: 17.6975, lng: 83.2682 },
+            { name: "King George Hospital (KGH) Blood Bank", area: "Maharanipeta", address: "King George Hospital Campus, Maharanipeta, Visakhapatnam - 530002", phone: "0891-2564891", lat: 17.7069, lng: 83.3057 },
+            { name: "Indian Red Cross Society Blood Bank", area: "Maharanipeta", address: "D.No. 14-35-4, Behind Collectorate, Z.P. Junction, Maharanipeta, Visakhapatnam - 530002", phone: "0891-2703953", lat: 17.7115, lng: 83.3075 },
+            { name: "A.S. Raja Voluntary Blood Bank", area: "Ram Nagar", address: "D.No. 10-50-11/5, Beside CARE Hospital, Waltair Main Road, Ram Nagar, Visakhapatnam - 530002", phone: "0891-2543436", lat: 17.7186, lng: 83.3080 },
+            { name: "NTR Memorial Trust Blood Bank", area: "Ram Nagar", address: "Plot No. 15B-3-1, Waltair Main Road, Ram Nagar, Visakhapatnam - 530002", phone: "0891-2565858", lat: 17.7178, lng: 83.3092 },
+            { name: "Lions Club of Visakhapatnam Blood Bank", area: "Ram Nagar", address: "D.No. 10-54-7, Lions Community Hall, Ram Nagar, Visakhapatnam - 530002", phone: "0891-6692587", lat: 17.7165, lng: 83.3065 },
+            { name: "Rotary Blood Bank", area: "Jagadamba Junction", address: "3rd Floor, Apuroopa Arcade, Near Jagadamba Junction, Maharanipeta, Visakhapatnam - 530020", phone: "0891-2506678", lat: 17.7124, lng: 83.3022 },
+            { name: "Apollo Hospitals Blood Bank", area: "Health City, Arilova", address: "D.No. 18-516/2/1, 3rd Floor, Health City, Arilova, Chinagadili, Visakhapatnam - 530040", phone: "0891-2727272", lat: 17.7662, lng: 83.3210 }
+        ];
+
+        const COURIER_RIDERS = [
+            { name: "Karthik Reddy", vehicle: "Cold-Chain MedBike (AP 31 PL 1082)", phone: "9848551082", eta: "22 mins" },
+            { name: "Ravi Teja", vehicle: "Insulated Blood Van (AP 39 PL 4421)", phone: "9912441088", eta: "28 mins" },
+            { name: "Srinivas Rao", vehicle: "Cold-Chain MedBike (AP 31 PL 9034)", phone: "9701223344", eta: "19 mins" }
+        ];
+
+        let activeDonor = null;
+        let currentFilter = "all";
+        let isAvailable = true;
+        let knownRequestIds = new Set();
+        let originCoords = { lat: 17.6868, lng: 83.2089 };
+
+        function getAllRequests() {
+            return JSON.parse(localStorage.getItem("pulseLinkRequests") || "[]");
+        }
+
+        function saveAllRequests(list) {
+            localStorage.setItem("pulseLinkRequests", JSON.stringify(list));
+        }
+
+        function getDonationHistory() {
+            const key = "pulseLinkDonations_" + ((activeDonor && activeDonor.name) ? activeDonor.name.toLowerCase() : "guest");
+            let list = JSON.parse(localStorage.getItem(key) || "null");
+            if (!list) {
+                list = [
+                    { date: "14 Aug 2026", bloodGroup: (activeDonor && activeDonor.bloodGroup) || "O+", place: "Vande Bharat Blood Centre, Old Gajuwaka", recipient: "Voluntary Camp Donation", mode: "Direct Visit" },
+                    { date: "02 Apr 2026", bloodGroup: (activeDonor && activeDonor.bloodGroup) || "O+", place: "KGH Blood Bank, Visakhapatnam", recipient: "Emergency Ward Support", mode: "Direct Visit" }
+                ];
+                localStorage.setItem(key, JSON.stringify(list));
+            }
+            return list;
+        }
+
+        function saveDonationHistory(list) {
+            const key = "pulseLinkDonations_" + ((activeDonor && activeDonor.name) ? activeDonor.name.toLowerCase() : "guest");
+            localStorage.setItem(key, JSON.stringify(list));
+        }
+
+        function loadDonorProfile() {
+            const raw = localStorage.getItem("pulseLinkActiveUser");
+            if (raw) {
+                activeDonor = JSON.parse(raw);
+            } else {
+                activeDonor = { name: "Verified Donor", email: "", bloodGroup: "O+", phone: "9876543210", address: "Gajuwaka, Visakhapatnam", role: "customer" };
+            }
+
+            const bg = activeDonor.bloodGroup || "O+";
+            document.getElementById("profile-name").textContent = activeDonor.name || "Verified Donor";
+            document.getElementById("profile-blood").textContent = bg;
+            document.getElementById("profile-location-chip").textContent = "📍 " + (activeDonor.address || "Gajuwaka, Visakhapatnam");
+            document.getElementById("filter-mine").textContent = `Only My Blood Group (${bg})`;
+        }
+
+        function renderDonationHistory() {
+            const history = getDonationHistory();
+            const count = history.length;
+            document.getElementById("profile-count-chip").textContent = `🩸 Total Donations: ${count} ${count === 1 ? "Time" : "Times"}`;
+            document.getElementById("stat-donated").textContent = count;
+
+            document.getElementById("donation-history-body").innerHTML = history.map((d, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${d.date}</td>
+                    <td><strong style="color:#ff8a92;">${d.bloodGroup}</strong></td>
+                    <td>${d.place}</td>
+                    <td>${d.recipient}</td>
+                    <td>${d.mode}</td>
+                </tr>
+            `).join("");
+        }
+
+        function addManualDonation() {
+            const place = prompt("Enter Hospital or Blood Bank Name (e.g. Vande Bharat Blood Centre, Gajuwaka):");
+            if (!place || !place.trim()) return;
+            const recipient = prompt("Recipient / Camp Name (optional):", "Voluntary Donation") || "Voluntary Donation";
+            const history = getDonationHistory();
+            history.unshift({
+                date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+                bloodGroup: (activeDonor && activeDonor.bloodGroup) || "O+",
+                place: place.trim(),
+                recipient: recipient.trim(),
+                mode: "Direct Visit"
+            });
+            saveDonationHistory(history);
+            renderDonationHistory();
+        }
+
+        function toggleAvailability() {
+            isAvailable = !isAvailable;
+            const btn = document.getElementById("avail-toggle");
+            btn.classList.toggle("offline", !isAvailable);
+            btn.textContent = isAvailable ? "🟢 Available to Donate (Live Alerts ON)" : "⚪ Offline (Alerts Paused)";
+        }
+
+        function setFilter(mode) {
+            currentFilter = mode;
+            document.getElementById("filter-all").classList.toggle("active", mode === "all");
+            document.getElementById("filter-mine").classList.toggle("active", mode === "match");
+            renderDashboard();
+        }
+
+        function playAlertBeep() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.22);
+            } catch (e) {}
+        }
+
+        function showLiveToast(req) {
+            if (!isAvailable) return;
+            document.getElementById("toast-body-text").innerHTML = `
+                <strong>${req.bloodGroup} Blood (${req.units || "1 Unit"})</strong> needed for <strong>${req.patientName}</strong> at <strong>${req.hospital}</strong>.
+            `;
+            document.getElementById("live-toast").classList.add("show");
+            playAlertBeep();
+        }
+
+        function closeLiveToast() {
+            document.getElementById("live-toast").classList.remove("show");
+        }
+
+        function renderDashboard() {
+            const all = getAllRequests();
+            const myBg = (activeDonor && activeDonor.bloodGroup) ? activeDonor.bloodGroup : "O+";
+
+            const pendingAll = all.filter(r => r.status === "pending");
+            const matchingPending = pendingAll.filter(r => r.bloodGroup === myBg);
+            const myAccepted = all.filter(r =>
+                r.donor && r.donor.name && activeDonor &&
+                r.donor.name.toLowerCase() === (activeDonor.name || "").toLowerCase()
+            );
+
+            document.getElementById("stat-open").textContent = pendingAll.length;
+            document.getElementById("stat-match").textContent = matchingPending.length;
+            document.getElementById("stat-mine").textContent = myAccepted.filter(r => r.status !== "completed").length;
+
+            const visibleAlerts = currentFilter === "match" ? matchingPending : pendingAll;
+            const openGrid = document.getElementById("open-alerts-grid");
+
+            if (visibleAlerts.length === 0) {
+                openGrid.innerHTML = `<div class="empty-state">No active Real Donor alerts right now. Keep this tab open to receive live notifications from patients!</div>`;
+            } else {
+                openGrid.innerHTML = visibleAlerts.map(req => {
+                    const isExactMatch = req.bloodGroup === myBg;
+                    const paidTag = req.invoice
+                        ? `<span class="match-tag">✔ Paid ₹${Number(req.invoice.grandTotal).toFixed(2)} (${req.invoice.paymentMethod})</span>`
+                        : "";
+
+                    return `
+                        <div class="alert-card urgent">
+                            <div>
+                                <div class="card-top" style="margin-bottom:10px;">
+                                    <span class="blood-chip">🩸 ${req.bloodGroup} • ${req.units || "1 Unit"}</span>
+                                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                        ${isExactMatch ? `<span class="match-tag">Matches Your Blood</span>` : ""}
+                                        ${paidTag}
+                                    </div>
+                                </div>
+
+                                <div class="verify-box">
+                                    <h4>🩺 Patient Verification Details</h4>
+                                    <div><strong>Patient Name:</strong> ${req.patientName}</div>
+                                    <div><strong>Hospital ID Number:</strong> ${req.hospitalId || "Verified Patient"}</div>
+                                    <div><strong>Hospital Name:</strong> ${req.hospital}</div>
+                                    <div><strong>Phone Number:</strong> <a href="tel:${req.phone}" style="color:#7dd3fc; font-weight:700;">📞 ${req.phone}</a></div>
+                                    <div><strong>Permanent Address:</strong> ${req.permanentAddress || req.address}</div>
+                                    <div><strong>Hospital Address:</strong> ${req.hospitalAddress || req.address}</div>
+                                </div>
+                            </div>
+
+                            <div class="action-row">
+                                <button type="button" class="btn-accept" onclick="acceptEmergencyRequest('${req.id}')">
+                                    ✅ Verify & Accept Donation (Receive Patient Bill PDF)
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            // Accepted Missions + Patient Payment PDF Bill
+            const missionsGrid = document.getElementById("accepted-missions-grid");
+            if (myAccepted.length === 0) {
+                missionsGrid.innerHTML = `<div class="empty-state">No accepted donations yet. Verify & accept a patient request above to receive their payment PDF bill and coordinate donation.</div>`;
+            } else {
+                missionsGrid.innerHTML = myAccepted.map(req => {
+                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(req.hospital + " " + (req.hospitalAddress || req.address))}`;
+
+                    const billBarHTML = req.invoice
+                        ? `
+                            <div class="bill-share-bar">
+                                <span>🧾 Patient Paid Bill: <strong>${req.invoice.invoiceNo}</strong> (₹${Number(req.invoice.grandTotal).toFixed(2)} via ${req.invoice.paymentMethod})</span>
+                                <div style="display:flex; gap:6px;">
+                                    <button type="button" class="btn-action blue" onclick="viewSharedBill('${req.id}')">👁️ View Bill PDF</button>
+                                    <button type="button" class="btn-action green" onclick="downloadSharedBill('${req.id}')">⬇️ Download PDF</button>
+                                </div>
+                            </div>
+                        `
+                        : "";
+
+                    let deliveryBlock = "";
+                    if (req.status === "completed") {
+                        deliveryBlock = `<div style="color:#4ade80; font-weight:700; font-size:13px;">🏆 Donation Completed & Added to Your Donation History!</div>`;
+                    } else if (req.deliveryMode === "courier" && req.courier) {
+                        const stepNames = ["", "Rider Assigned", "Blood Collected at Donor", "Cold-Box In Transit", "Delivered to Patient"];
+                        const nextStepBtn = req.courier.step < 4
+                            ? `<button type="button" class="btn-action blue" onclick="advanceCourierStep('${req.id}')">Update Status → ${stepNames[req.courier.step + 1]}</button>`
+                            : "";
+                        deliveryBlock = `
+                            <div class="courier-box">
+                                <div style="color:#7dd3fc; font-weight:700; margin-bottom:4px;">🛵 Long-Distance Blood Delivery Rider Assigned</div>
+                                <strong>Rider:</strong> ${req.courier.name} • <strong>Vehicle:</strong> ${req.courier.vehicle}<br>
+                                <strong>Rider Phone:</strong> <a href="tel:${req.courier.phone}" style="color:#7dd3fc;">${req.courier.phone}</a> • <strong>ETA:</strong> ${req.courier.eta}<br>
+                                <strong>Current Stage:</strong> ${stepNames[req.courier.step]}
+                            </div>
+                            <div class="action-row" style="margin-top:8px;">${nextStepBtn}</div>
+                        `;
+                    } else if (req.deliveryMode === "direct") {
+                        deliveryBlock = `
+                            <div style="color:#bbf7d0; font-size:13px; font-weight:600;">🚗 Visiting Patient Directly to Donate</div>
+                            <div class="action-row">
+                                <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="btn-action green">📍 Open Hospital in Google Maps</a>
+                                <button type="button" class="btn-action blue" onclick="dispatchCourier('${req.id}')">Switch to Delivery Rider</button>
+                                <button type="button" class="btn-action" onclick="completeDirectDonation('${req.id}')">✔ Mark Blood Donated</button>
+                            </div>
+                        `;
+                    } else {
+                        deliveryBlock = `
+                            <div style="font-size:12.5px; color:#cbd5e1; font-weight:600;">Choose how you will donate blood:</div>
+                            <div class="action-row">
+                                <button type="button" class="btn-action green" onclick="chooseDirectVisit('${req.id}')">🚗 Go Directly & Donate</button>
+                                <button type="button" class="btn-action blue" onclick="dispatchCourier('${req.id}')">🛵 Book Long-Distance Delivery Rider</button>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div class="alert-card ${req.status === "courier" ? "courier" : "accepted"}">
+                            <div class="card-top">
+                                <span class="blood-chip">🩸 ${req.bloodGroup} • ${req.units || "1 Unit"}</span>
+                                <span class="match-tag">${req.status.toUpperCase()}</span>
+                            </div>
+                            <div class="unlocked-box">
+                                <h4>✅ Verified Patient Details</h4>
+                                <div><strong>Patient:</strong> ${req.patientName} • <strong>Hospital ID:</strong> ${req.hospitalId || "Verified"}</div>
+                                <div><strong>Phone:</strong> <a href="tel:${req.phone}" style="color:#4ade80; font-weight:700;">📞 ${req.phone}</a></div>
+                                <div><strong>Hospital:</strong> ${req.hospital} (${req.hospitalAddress || req.address})</div>
+                                <div><strong>Permanent Address:</strong> ${req.permanentAddress || req.address}</div>
+                            </div>
+                            ${billBarHTML}
+                            ${deliveryBlock}
+                        </div>
+                    `;
+                }).join("");
+            }
+        }
+
+        function viewSharedBill(reqId) {
+            const req = getAllRequests().find(r => r.id === reqId);
+            if (req && req.invoice && window.PulseLinkBilling) {
+                PulseLinkBilling.viewInvoice(req.invoice);
+            }
+        }
+
+        function downloadSharedBill(reqId) {
+            const req = getAllRequests().find(r => r.id === reqId);
+            if (req && req.invoice && window.PulseLinkBilling) {
+                PulseLinkBilling.downloadPDF(req.invoice);
+            }
+        }
+
+        function logCompletedDonation(req, modeLabel) {
+            const history = getDonationHistory();
+            history.unshift({
+                date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+                bloodGroup: req.bloodGroup,
+                place: req.hospital,
+                recipient: req.patientName,
+                mode: modeLabel
+            });
+            saveDonationHistory(history);
+            renderDonationHistory();
+        }
+
+        function acceptEmergencyRequest(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req) return;
+            req.status = "accepted";
+            req.donor = {
+                name: activeDonor.name || "Verified Donor",
+                bloodGroup: activeDonor.bloodGroup || req.bloodGroup,
+                phone: activeDonor.phone || "9876543210",
+                address: activeDonor.address || "Gajuwaka, Visakhapatnam"
+            };
+            saveAllRequests(all);
+            renderDashboard();
+
+            // Automatically open the patient's payment PDF receipt for the accepting customer
+            if (req.invoice && window.PulseLinkBilling) {
+                PulseLinkBilling.viewInvoice(req.invoice);
+            }
+            document.getElementById("my-missions").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function chooseDirectVisit(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req) return;
+            req.deliveryMode = "direct";
+            req.status = "accepted";
+            saveAllRequests(all);
+            renderDashboard();
+        }
+
+        function completeDirectDonation(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req) return;
+            req.status = "completed";
+            saveAllRequests(all);
+            logCompletedDonation(req, "Direct Visit");
+            renderDashboard();
+        }
+
+        function dispatchCourier(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req) return;
+            const rider = COURIER_RIDERS[Math.floor(Math.random() * COURIER_RIDERS.length)];
+            req.deliveryMode = "courier";
+            req.status = "courier";
+            req.courier = { name: rider.name, vehicle: rider.vehicle, phone: rider.phone, eta: rider.eta, step: 1 };
+            saveAllRequests(all);
+            renderDashboard();
+        }
+
+        function advanceCourierStep(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req || !req.courier) return;
+            if (req.courier.step < 4) {
+                req.courier.step += 1;
+                if (req.courier.step === 4) {
+                    req.status = "completed";
+                    logCompletedDonation(req, "Long-Distance Delivery Rider");
+                }
+                saveAllRequests(all);
+                renderDashboard();
+            }
+        }
+
+        function calcDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.25).toFixed(1);
+        }
+
+        function changeOriginArea() {
+            const val = document.getElementById("area-origin").value.split(",");
+            originCoords = { lat: parseFloat(val[0]), lng: parseFloat(val[1]) };
+            renderBloodCenters();
+        }
+
+        function useLiveGPS() {
+            if (!navigator.geolocation) {
+                alert("GPS is not supported on this browser.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    originCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                    renderBloodCenters();
+                    alert("Live GPS location updated! Distances recalculated in km.");
+                },
+                () => alert("Could not access GPS. Choose your Visakhapatnam area from the dropdown.")
+            );
+        }
+
+        function renderBloodCenters() {
+            const q = (document.getElementById("center-search").value || "").toLowerCase().trim();
+            const list = VIZAG_BLOOD_CENTERS
+                .map(c => ({ ...c, km: parseFloat(calcDistanceKm(originCoords.lat, originCoords.lng, c.lat, c.lng)) }))
+                .filter(c => !q || c.name.toLowerCase().includes(q) || c.area.toLowerCase().includes(q) || c.address.toLowerCase().includes(q))
+                .sort((a, b) => a.km - b.km);
+
+            document.getElementById("blood-centers-grid").innerHTML = list.map(c => {
+                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ", " + c.address)}`;
+                return `
+                    <a href="${mapsLink}" target="_blank" rel="noopener noreferrer" class="center-card">
+                        <div>
+                            <div class="center-top">
+                                <h4>${c.name}</h4>
+                                <span class="km-badge">${c.km} km</span>
+                            </div>
+                            <div class="center-addr" style="margin-top:6px;">
+                                📍 ${c.address}<br>
+                                📞 ${c.phone}
+                            </div>
+                        </div>
+                        <div class="center-foot">
+                            <span>${c.area}</span>
+                            <span>Open Google Maps ↗</span>
+                        </div>
+                    </a>
+                `;
+            }).join("");
+        }
+
+        function checkForNewLiveAlerts() {
+            const all = getAllRequests();
+            let newest = null;
+            all.forEach(r => {
+                if (r.status === "pending" && !knownRequestIds.has(r.id)) {
+                    knownRequestIds.add(r.id);
+                    if (!newest) newest = r;
+                }
+            });
+            if (newest) {
+                showLiveToast(newest);
+                renderDashboard();
+            }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem("pulseLinkActiveUser");
+            localStorage.removeItem("pulseLinkRole");
+            window.location.href = "index.html";
+        }
+
+        window.addEventListener("storage", function(e) {
+            if (e.key === "pulseLinkRequests") {
+                checkForNewLiveAlerts();
+                renderDashboard();
+            }
+        });
+
+        loadDonorProfile();
+        getAllRequests().forEach(r => knownRequestIds.add(r.id));
+        renderDonationHistory();
+        renderDashboard();
+        renderBloodCenters();
+        setInterval(checkForNewLiveAlerts, 2500);
+    </script>
+
+    <!-- Pulse Link PDF Bill Generator Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="pulselink-billing.js"></script>
+
+</body>
+</html>

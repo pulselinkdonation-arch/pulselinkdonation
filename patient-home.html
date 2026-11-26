@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Link | Patient Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+            color: #ffffff;
+            background-color: #0b0e14;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-wall {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 22%, rgba(185, 28, 38, 0.25) 0%, rgba(20, 12, 18, 0.22) 40%, rgba(8, 11, 17, 0.88) 78%),
+                radial-gradient(circle at 10% 70%, rgba(170, 24, 34, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 90% 50%, rgba(92, 118, 148, 0.18) 0%, transparent 46%),
+                linear-gradient(125deg, #0f0b10 0%, #141922 48%, #1b222e 100%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 0 24px 56px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px 0 18px;
+            border-bottom: 1px solid rgba(255, 82, 94, 0.22);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 2.6px;
+            background: linear-gradient(180deg, #ff9a9a 0%, #ff5757 52%, #e62e3d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255, 62, 72, 0.8));
+        }
+
+        .brand-heart-svg {
+            width: 42px;
+            height: 32px;
+            filter: drop-shadow(0 0 8px rgba(255, 60, 72, 0.85));
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: rgba(236, 240, 248, 0.86);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: #ff6b74; }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 8px 14px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            background: rgba(16, 20, 28, 0.72);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            border-color: #ff6b74;
+            background: rgba(165, 32, 44, 0.35);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(42, 48, 62, 0.48) 0%, rgba(17, 20, 28, 0.82) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            padding: 22px 24px;
+            margin-bottom: 26px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card.crimson-glow {
+            border-color: rgba(255, 92, 102, 0.48);
+            box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 48, 64, 0.14);
+        }
+
+        .patient-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .patient-banner h1 {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .patient-banner h1 span { color: #ff6b74; }
+
+        .patient-meta-line {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .p-tag {
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #f1f5f9;
+        }
+
+        .p-tag.blood {
+            background: rgba(225, 29, 72, 0.28);
+            border-color: #ff5a67;
+            color: #ffd7da;
+        }
+
+        .banner-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .helpline-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .helpline-pill {
+            padding: 8px 13px;
+            border-radius: 9px;
+            background: rgba(185, 28, 38, 0.24);
+            border: 1px solid rgba(255, 100, 110, 0.55);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .helpline-pill:hover { background: rgba(220, 38, 52, 0.55); }
+
+        .two-options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 28px;
+            align-items: start;
+        }
+
+        .option-card { margin-bottom: 0; }
+        .option-card.emergency-card { border-color: rgba(255, 92, 102, 0.55); }
+        .option-card.donor-card { border-color: rgba(56, 189, 248, 0.48); }
+
+        .option-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+        }
+
+        .option-badge.fast {
+            background: rgba(225, 29, 72, 0.25);
+            border: 1px solid #ff5a67;
+            color: #ffd7da;
+        }
+
+        .option-badge.real {
+            background: rgba(14, 165, 233, 0.22);
+            border: 1px solid #38bdf8;
+            color: #bae6fd;
+        }
+
+        .option-card h2 {
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .option-card p.opt-desc {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 11px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field.full { grid-column: 1 / -1; }
+
+        .field label {
+            font-size: 11.8px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .field select option {
+            background: #161b24;
+            color: #ffffff;
+        }
+
+        .btn-emergency {
+            width: 100%;
+            margin-top: 14px;
+            padding: 13px 18px;
+            border-radius: 9px;
+            border: 1px solid rgba(255, 130, 138, 0.65);
+            background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
+        }
+
+        .btn-real-donor {
+            width: 100%;
+            margin-top: 14px;
+            padding: 13px 18px;
+            border-radius: 9px;
+            border: 1px solid rgba(125, 211, 252, 0.65);
+            background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.38);
+        }
+
+        .feedback-msg {
+            min-height: 18px;
+            margin-top: 9px;
+            font-size: 12.5px;
+            font-weight: 600;
+            text-align: center;
+            color: #6ee7b7;
+        }
+
+        .section-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 17.5px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .req-card {
+            background: rgba(14, 18, 26, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .req-card.fast-mode { border-left: 4px solid #ff5a67; }
+        .req-card.donor-mode { border-left: 4px solid #38bdf8; }
+
+        .req-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .blood-chip {
+            padding: 4px 11px;
+            border-radius: 999px;
+            background: rgba(225, 29, 72, 0.25);
+            border: 1px solid #ff5a67;
+            color: #ffccd0;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .mode-chip {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mode-chip.fast {
+            background: rgba(225, 29, 72, 0.2);
+            border: 1px solid #ff6b74;
+            color: #fda4af;
+        }
+
+        .mode-chip.donor {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid #38bdf8;
+            color: #bae6fd;
+        }
+
+        .req-info {
+            font-size: 12.8px;
+            color: #cbd5e1;
+            line-height: 1.65;
+        }
+
+        .req-info strong { color: #ffffff; }
+
+        .paid-receipt-strip {
+            background: rgba(22, 163, 74, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.45);
+            border-radius: 9px;
+            padding: 9px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12.5px;
+        }
+
+        .rider-status-box {
+            background: rgba(14, 165, 233, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.42);
+            border-radius: 10px;
+            padding: 11px 13px;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .rider-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .r-step {
+            text-align: center;
+            font-size: 10.5px;
+            padding: 5px 3px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .r-step.active {
+            background: rgba(34, 197, 94, 0.24);
+            color: #dcfce7;
+            border-color: #22c55e;
+            font-weight: 700;
+        }
+
+        .btn-sm {
+            padding: 7px 12px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-sm.green {
+            background: rgba(22, 163, 74, 0.25);
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .btn-sm.blue {
+            background: rgba(14, 165, 233, 0.25);
+            border-color: #38bdf8;
+            color: #bae6fd;
+        }
+
+        .btn-sm.red {
+            background: rgba(220, 38, 38, 0.22);
+            border-color: #f87171;
+            color: #fecaca;
+        }
+
+        .centers-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .cyber-input,
+        .cyber-select {
+            padding: 10px 13px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            background: rgba(14, 18, 26, 0.85);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .cyber-input { flex: 1; min-width: 220px; }
+        .cyber-select option { background: #161b24; color: #ffffff; }
+
+        .centers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .center-card {
+            background: rgba(14, 18, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .center-card:hover {
+            transform: translateY(-3px);
+            border-color: #ff636e;
+            box-shadow: 0 10px 24px rgba(225, 29, 72, 0.24);
+        }
+
+        .center-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .center-card h4 {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+
+        .km-badge {
+            flex-shrink: 0;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid #38bdf8;
+            color: #bae6fd;
+            font-size: 11.5px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .center-addr {
+            font-size: 12.5px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .center-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fda4af;
+            font-weight: 700;
+        }
+
+        .intake-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(5, 8, 14, 0.84);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .intake-modal-overlay.open { display: flex; }
+
+        .intake-modal {
+            width: 100%;
+            max-width: 540px;
+            background: #131822;
+            border: 1.5px solid #ff5a67;
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.7), 0 0 28px rgba(225, 29, 72, 0.32);
+        }
+
+        .intake-modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .intake-modal p { font-size: 12.8px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5; }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 28px 16px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+        }
+
+        @media (max-width: 980px) {
+            .two-options-grid, .requests-grid { grid-template-columns: 1fr; }
+            .centers-grid { grid-template-columns: repeat(2, 1fr); }
+            .banner-right { align-items: flex-start; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 14px 40px; }
+            .form-grid, .centers-grid, .rider-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-wall" aria-hidden="true"></div>
+
+    <div class="container">
+        <!-- TOP NAVBAR -->
+        <header class="navbar">
+            <a href="index.html" class="brand-logo">
+                <span class="brand-text">PULSE LINK</span>
+                <svg class="brand-heart-svg" viewBox="0 0 64 46" fill="none">
+                    <path d="M27 40 C 27 40, 8 27, 8 15 C 8 8.5, 13.5 4, 19.5 5.5 C 23 6.4, 25.5 9, 27 11.5 C 28.5 9, 31 6.4, 34.5 5.5 C 40.5 4, 46 8.5, 46 15 C 46 27, 27 40, 27 40 Z" fill="#ff4d57" />
+                    <path d="M2 23 L 15 23 L 19 16 L 23 30 L 28 11 L 33 28 L 37 21 L 41 23 L 52 23" stroke="#180a0d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#request-options">Blood Options</a></li>
+                <li><a href="#active-requests">Live Status & Bills</a></li>
+                <li><a href="#vizag-centers">Vizag Blood Banks</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button type="button" class="nav-btn" onclick="openIntakeModal()">✏️ Edit Patient Details</button>
+                <a href="customer-home.html" target="_blank" class="nav-btn">Open Customer Tab ↗</a>
+                <button type="button" class="nav-btn" onclick="logoutUser()">Logout</button>
+            </div>
+        </header>
+
+        <!-- PATIENT SUMMARY BANNER -->
+        <section class="glass-card crimson-glow">
+            <div class="patient-banner">
+                <div>
+                    <h1>Patient Hub: <span id="disp-pat-name">Patient</span></h1>
+                    <p style="font-size:13px; color:#cbd5e1;" id="disp-pat-addresses">
+                        Hospital & Permanent addresses will appear here.
+                    </p>
+                    <div class="patient-meta-line">
+                        <span class="p-tag blood" id="disp-pat-blood">🩸 Blood: O+</span>
+                        <span class="p-tag" id="disp-pat-hid">🏥 Hospital ID: Pending</span>
+                        <span class="p-tag" id="disp-pat-phone">📞 Phone: Pending</span>
+                    </div>
+                </div>
+
+                <div class="banner-right">
+                    <div class="helpline-row">
+                        <a href="tel:18001087857" class="helpline-pill">☎️ Pulse Link: 1800-108-7857</a>
+                        <a href="tel:104" class="helpline-pill">🩸 Blood: 104</a>
+                        <a href="tel:108" class="helpline-pill">🚑 Ambulance: 108</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TWO CORE OPTIONS WITH PAYMENT + PDF BILL -->
+        <section class="two-options-grid" id="request-options">
+
+            <!-- OPTION 1: EMERGENCY BLOOD NEEDED (DELIVERY BOY) -->
+            <div class="glass-card option-card emergency-card">
+                <span class="option-badge fast">⚡ Option 1 • Fast Emergency</span>
+                <h2>🚨 Emergency Blood Needed (Delivery Boy)</h2>
+                <p class="opt-desc">
+                    Complete payment to dispatch an express <strong>Delivery Boy</strong> with Patient Name, Phone, Blood Group & Hospital details to collect blood from the Blood Centre and deliver it fast.
+                </p>
+
+                <form id="emergency-delivery-form" onsubmit="proceedEmergencyDeliveryPayment(event)">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Patient Name *</label>
+                            <input type="text" id="em-name" required>
+                        </div>
+                        <div class="field">
+                            <label>Hospital Patient ID *</label>
+                            <input type="text" id="em-hid" placeholder="e.g. HID-88421" required>
+                        </div>
+                        <div class="field">
+                            <label>Blood Group Needed *</label>
+                            <select id="em-blood" required>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Patient Phone Number *</label>
+                            <input type="tel" id="em-phone" required>
+                        </div>
+                        <div class="field">
+                            <label>Blood Centre to Pick From *</label>
+                            <select id="em-centre" required>
+                                <option value="Vande Bharat Blood Centre, Old Gajuwaka">Vande Bharat Blood Centre (Old Gajuwaka)</option>
+                                <option value="Visakha Voluntary Blood Bank, Gajuwaka">Visakha Voluntary Blood Bank (Gajuwaka)</option>
+                                <option value="KGH Blood Bank, Maharanipeta, Vizag">KGH Blood Bank (Maharanipeta, Vizag)</option>
+                                <option value="Indian Red Cross Blood Bank, Vizag">Indian Red Cross Blood Bank (Vizag)</option>
+                                <option value="Apollo Hospitals Blood Bank, Arilova, Vizag">Apollo Hospitals Blood Bank (Arilova, Vizag)</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Units Needed *</label>
+                            <select id="em-units" required>
+                                <option value="1 Unit">1 Unit</option>
+                                <option value="2 Units" selected>2 Units</option>
+                                <option value="3 Units">3 Units</option>
+                                <option value="4 Units">4 Units</option>
+                            </select>
+                        </div>
+                        <div class="field full">
+                            <label>Hospital Name *</label>
+                            <input type="text" id="em-hospital" placeholder="e.g. Apollo Hospital / KGH Visakhapatnam" required>
+                        </div>
+                        <div class="field full">
+                            <label>Hospital Address *</label>
+                            <input type="text" id="em-hosp-addr" placeholder="Ward/ICU, Hospital Road, Area, City, Pincode" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-emergency">💳 Pay & Send Fast Alert to Delivery Boy</button>
+                    <div id="em-feedback" class="feedback-msg"></div>
+                </form>
+            </div>
+
+            <!-- OPTION 2: REAL DONOR NEEDED (LIVE ALERT TO CUSTOMERS) -->
+            <div class="glass-card option-card donor-card">
+                <span class="option-badge real">🩸 Option 2 • Real Donor Alert</span>
+                <h2>🙋 Need Blood from Real Donor (Customer Alert)</h2>
+                <p class="opt-desc">
+                    Complete payment to broadcast a verified request to <strong>logged-in Customers</strong>. Customers verify your details, come to donate, and also receive your paid PDF receipt upon accepting.
+                </p>
+
+                <form id="real-donor-form" onsubmit="proceedRealDonorPayment(event)">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Patient Name *</label>
+                            <input type="text" id="rd-name" required>
+                        </div>
+                        <div class="field">
+                            <label>Hospital ID Number *</label>
+                            <input type="text" id="rd-hid" placeholder="e.g. HID-88421" required>
+                        </div>
+                        <div class="field">
+                            <label>Blood Group Needed *</label>
+                            <select id="rd-blood" required>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Units Needed *</label>
+                            <select id="rd-units" required>
+                                <option value="1 Unit" selected>1 Unit</option>
+                                <option value="2 Units">2 Units</option>
+                                <option value="3 Units">3 Units</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Patient Phone Number *</label>
+                            <input type="tel" id="rd-phone" required>
+                        </div>
+                        <div class="field">
+                            <label>Hospital Name *</label>
+                            <input type="text" id="rd-hospital" placeholder="e.g. Apollo Hospital / KGH" required>
+                        </div>
+                        <div class="field full">
+                            <label>Permanent Address *</label>
+                            <input type="text" id="rd-perm-addr" placeholder="Door No, Street, Area, City, Pincode" required>
+                        </div>
+                        <div class="field full">
+                            <label>Hospital Address *</label>
+                            <input type="text" id="rd-hosp-addr" placeholder="Ward/Floor, Hospital Road, Area, City, Pincode" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-real-donor">💳 Pay & Send Blood Alert to Customers</button>
+                    <div id="rd-feedback" class="feedback-msg"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- LIVE TRACKER & PAID PDF BILLS -->
+        <section class="glass-card" id="active-requests">
+            <div class="section-top">
+                <h2 class="section-title">📡 Live Delivery Boy, Real Donor Status & Bills</h2>
+                <button type="button" class="btn-sm" onclick="renderRequests()">↻ Refresh Live Status</button>
+            </div>
+            <div class="requests-grid" id="requests-grid"></div>
+        </section>
+
+        <!-- VISAKHAPATNAM & GAJUWAKA BLOOD DONATION CENTERS WITH KM DISTANCE & GOOGLE MAPS -->
+        <section class="glass-card" id="vizag-centers">
+            <div class="section-top">
+                <h2 class="section-title">🏥 Visakhapatnam & Gajuwaka Blood Donation Centers</h2>
+                <span style="font-size:12.5px; color:#94a3b8;">Click any blood bank to open directions in Google Maps</span>
+            </div>
+
+            <div class="centers-controls">
+                <input type="text" id="center-search" class="cyber-input" placeholder="Search blood bank (e.g. Vande Bharat, Gajuwaka, KGH, Red Cross)..." oninput="renderBloodCenters()">
+                <select id="area-origin" class="cyber-select" onchange="changeOriginArea()">
+                    <option value="17.6868,83.2089">Distance From: Gajuwaka (Default)</option>
+                    <option value="17.6745,83.1865">Distance From: Vadlapudi</option>
+                    <option value="17.6801,83.1748">Distance From: Kurmannapalem</option>
+                    <option value="17.7447,83.2314">Distance From: NAD Junction</option>
+                    <option value="17.7115,83.3075">Distance From: Maharanipeta / KGH</option>
+                    <option value="17.7231,83.3012">Distance From: Dwaraka Nagar</option>
+                    <option value="17.7418,83.3340">Distance From: MVP Colony</option>
+                    <option value="17.7924,83.3548">Distance From: Madhurawada</option>
+                </select>
+                <button type="button" class="btn-sm green" onclick="useLiveGPS()">📍 Use My Live GPS</button>
+            </div>
+
+            <div class="centers-grid" id="blood-centers-grid"></div>
+        </section>
+    </div>
+
+    <!-- PATIENT DETAILS INTAKE / EDIT MODAL -->
+    <div class="intake-modal-overlay" id="intake-modal-overlay">
+        <div class="intake-modal" onclick="event.stopPropagation()">
+            <h3>🩺 Enter Patient Medical & Contact Details</h3>
+            <p>Please fill in the patient details so emergency blood alerts, delivery riders, and PDF bills have accurate information.</p>
+
+            <form id="intake-form" onsubmit="savePatientIntake(event)">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Patient Name *</label>
+                        <input type="text" id="in-name" placeholder="Full Name" required>
+                    </div>
+                    <div class="field">
+                        <label>Hospital Patient ID *</label>
+                        <input type="text" id="in-hid" placeholder="e.g. PL-HID-4092" required>
+                    </div>
+                    <div class="field">
+                        <label>Patient Blood Group *</label>
+                        <select id="in-blood" required>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Patient Phone Number *</label>
+                        <input type="tel" id="in-phone" placeholder="10-digit mobile number" maxlength="15" required>
+                    </div>
+                    <div class="field full">
+                        <label>Hospital Name *</label>
+                        <input type="text" id="in-hospital" placeholder="e.g. Apollo Hospital / KGH Visakhapatnam" required>
+                    </div>
+                    <div class="field full">
+                        <label>Permanent Address *</label>
+                        <input type="text" id="in-perm-addr" placeholder="Door No, Street, Area, City, Pincode" required>
+                    </div>
+                    <div class="field full">
+                        <label>Hospital Address *</label>
+                        <input type="text" id="in-hosp-addr" placeholder="Ward/ICU, Hospital Road, Area, City, Pincode" required>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:16px;">
+                    <button type="submit" class="btn-emergency" style="margin-top:0; flex:1;">Save & Continue to Patient Home</button>
+                    <button type="button" class="btn-sm" onclick="closeIntakeModal()">Later</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const VIZAG_BLOOD_CENTERS = [
+            { name: "Vande Bharat Blood Centre", area: "Old Gajuwaka", address: "Opposite Lifestyle, Chinagantyada, Old Gajuwaka, Visakhapatnam - 530026", phone: "6262172737", lat: 17.6868, lng: 83.2089 },
+            { name: "Visakha Voluntary Blood Bank", area: "Old Gajuwaka Junction", address: "1st Floor, Krishna Arcade, Old Gajuwaka Junction, Gajuwaka, Visakhapatnam - 530026", phone: "0891-2514444", lat: 17.6881, lng: 83.2095 },
+            { name: "Amma Blood Centre", area: "Gajuwaka", address: "Kaniti Road, Near Vantillu Junction, Beside Sai Priya Function Hall, Gajuwaka - 530026", phone: "0891-2512233", lat: 17.6812, lng: 83.1995 },
+            { name: "Sanjeevani Voluntary Blood Bank", area: "Gajuwaka", address: "Kaniti Road, Opposite SFS School, Gajuwaka, Visakhapatnam - 530026", phone: "0891-2516677", lat: 17.6820, lng: 83.1980 },
+            { name: "KIMS ICON Blood Centre", area: "Sheela Nagar, Gajuwaka", address: "D.No. 32-11-2, KIMS ICON Hospital, Sheela Nagar, Gajuwaka, Visakhapatnam - 530012", phone: "0891-6799999", lat: 17.7126, lng: 83.1924 },
+            { name: "Visakha Steel General Hospital Blood Bank", area: "Ukkunagaram, Steel Plant", address: "First Floor, Sector 6, Ukkunagaram, Visakhapatnam Steel Plant - 530032", phone: "0891-2887722", lat: 17.6485, lng: 83.1670 },
+            { name: "INHS Kalyani Blood Bank", area: "Gandhigram, Gajuwaka", address: "INHS Kalyani Naval Hospital, Gandhigram, Visakhapatnam - 530005", phone: "0891-2814028", lat: 17.6975, lng: 83.2682 },
+            { name: "King George Hospital (KGH) Blood Bank", area: "Maharanipeta", address: "King George Hospital Campus, Maharanipeta, Visakhapatnam - 530002", phone: "0891-2564891", lat: 17.7069, lng: 83.3057 },
+            { name: "Indian Red Cross Society Blood Bank", area: "Maharanipeta", address: "D.No. 14-35-4, Behind Collectorate, Z.P. Junction, Maharanipeta, Visakhapatnam - 530002", phone: "0891-2703953", lat: 17.7115, lng: 83.3075 },
+            { name: "A.S. Raja Voluntary Blood Bank", area: "Ram Nagar", address: "D.No. 10-50-11/5, Beside CARE Hospital, Waltair Main Road, Ram Nagar, Visakhapatnam - 530002", phone: "0891-2543436", lat: 17.7186, lng: 83.3080 },
+            { name: "NTR Memorial Trust Blood Bank", area: "Ram Nagar", address: "Plot No. 15B-3-1, Waltair Main Road, Ram Nagar, Visakhapatnam - 530002", phone: "0891-2565858", lat: 17.7178, lng: 83.3092 },
+            { name: "Lions Club of Visakhapatnam Blood Bank", area: "Ram Nagar", address: "D.No. 10-54-7, Lions Community Hall, Ram Nagar, Visakhapatnam - 530002", phone: "0891-6692587", lat: 17.7165, lng: 83.3065 },
+            { name: "Rotary Blood Bank", area: "Jagadamba Junction", address: "3rd Floor, Apuroopa Arcade, Near Jagadamba Junction, Maharanipeta, Visakhapatnam - 530020", phone: "0891-2506678", lat: 17.7124, lng: 83.3022 },
+            { name: "Apollo Hospitals Blood Bank", area: "Health City, Arilova", address: "D.No. 18-516/2/1, 3rd Floor, Health City, Arilova, Chinagadili, Visakhapatnam - 530040", phone: "0891-2727272", lat: 17.7662, lng: 83.3210 }
+        ];
+
+        const FAST_DELIVERY_BOYS = [
+            { name: "Arjun Verma", vehicle: "Express Cold-Chain Rider (AP 31 EX 4091)", phone: "9848011223", eta: "14 mins (Fast Express)" },
+            { name: "Vikram Naidu", vehicle: "Rapid Blood Courier Bike (AP 39 EX 7720)", phone: "9989055441", eta: "17 mins (Fast Express)" }
+        ];
+
+        let patientProfile = null;
+        let originCoords = { lat: 17.6868, lng: 83.2089 };
+
+        function getAllRequests() {
+            return JSON.parse(localStorage.getItem("pulseLinkRequests") || "[]");
+        }
+
+        function saveAllRequests(list) {
+            localStorage.setItem("pulseLinkRequests", JSON.stringify(list));
+        }
+
+        function loadPatientProfile() {
+            const raw = localStorage.getItem("pulseLinkActiveUser");
+            const base = raw ? JSON.parse(raw) : {};
+            patientProfile = {
+                name: base.name || "Patient",
+                hospitalId: base.hospitalId || ("HID-" + Math.floor(10000 + Math.random() * 90000)),
+                bloodGroup: base.bloodGroup || "O+",
+                phone: base.phone || "",
+                hospital: base.hospital || "",
+                permanentAddress: base.permanentAddress || base.address || "",
+                hospitalAddress: base.hospitalAddress || base.address || "",
+                email: base.email || "",
+                role: "patient"
+            };
+
+            applyProfileToUI();
+            if (!patientProfile.phone || !patientProfile.permanentAddress || !patientProfile.hospitalAddress) {
+                openIntakeModal();
+            }
+        }
+
+        function openIntakeModal() {
+            document.getElementById("in-name").value = patientProfile.name === "Patient" ? "" : patientProfile.name;
+            document.getElementById("in-hid").value = patientProfile.hospitalId || "";
+            document.getElementById("in-blood").value = patientProfile.bloodGroup || "O+";
+            document.getElementById("in-phone").value = patientProfile.phone || "";
+            document.getElementById("in-hospital").value = patientProfile.hospital || "";
+            document.getElementById("in-perm-addr").value = patientProfile.permanentAddress || "";
+            document.getElementById("in-hosp-addr").value = patientProfile.hospitalAddress || "";
+            document.getElementById("intake-modal-overlay").classList.add("open");
+        }
+
+        function closeIntakeModal() {
+            document.getElementById("intake-modal-overlay").classList.remove("open");
+        }
+
+        function savePatientIntake(event) {
+            event.preventDefault();
+            patientProfile = {
+                ...patientProfile,
+                name: document.getElementById("in-name").value.trim(),
+                hospitalId: document.getElementById("in-hid").value.trim(),
+                bloodGroup: document.getElementById("in-blood").value,
+                phone: document.getElementById("in-phone").value.trim(),
+                hospital: document.getElementById("in-hospital").value.trim(),
+                permanentAddress: document.getElementById("in-perm-addr").value.trim(),
+                hospitalAddress: document.getElementById("in-hosp-addr").value.trim(),
+                address: document.getElementById("in-hosp-addr").value.trim(),
+                role: "patient"
+            };
+            localStorage.setItem("pulseLinkActiveUser", JSON.stringify(patientProfile));
+            applyProfileToUI();
+            closeIntakeModal();
+        }
+
+        function applyProfileToUI() {
+            document.getElementById("disp-pat-name").textContent = patientProfile.name;
+            document.getElementById("disp-pat-blood").textContent = "🩸 Blood: " + patientProfile.bloodGroup;
+            document.getElementById("disp-pat-hid").textContent = "🏥 Hospital ID: " + patientProfile.hospitalId;
+            document.getElementById("disp-pat-phone").textContent = "📞 Phone: " + (patientProfile.phone || "Not set");
+            document.getElementById("disp-pat-addresses").textContent =
+                `Hospital: ${patientProfile.hospital || "Not set"} • Hospital Addr: ${patientProfile.hospitalAddress || "Not set"} • Permanent Addr: ${patientProfile.permanentAddress || "Not set"}`;
+
+            document.getElementById("em-name").value = patientProfile.name === "Patient" ? "" : patientProfile.name;
+            document.getElementById("em-hid").value = patientProfile.hospitalId || "";
+            document.getElementById("em-blood").value = patientProfile.bloodGroup || "O+";
+            document.getElementById("em-phone").value = patientProfile.phone || "";
+            document.getElementById("em-hospital").value = patientProfile.hospital || "";
+            document.getElementById("em-hosp-addr").value = patientProfile.hospitalAddress || "";
+
+            document.getElementById("rd-name").value = patientProfile.name === "Patient" ? "" : patientProfile.name;
+            document.getElementById("rd-hid").value = patientProfile.hospitalId || "";
+            document.getElementById("rd-blood").value = patientProfile.bloodGroup || "O+";
+            document.getElementById("rd-phone").value = patientProfile.phone || "";
+            document.getElementById("rd-hospital").value = patientProfile.hospital || "";
+            document.getElementById("rd-perm-addr").value = patientProfile.permanentAddress || "";
+            document.getElementById("rd-hosp-addr").value = patientProfile.hospitalAddress || "";
+        }
+
+        // OPTION 1: Payment First -> Dispatch Fast Delivery Boy + Generate PDF Bill
+        function proceedEmergencyDeliveryPayment(event) {
+            event.preventDefault();
+
+            const orderPayload = {
+                requestType: "emergency_delivery",
+                patientName: document.getElementById("em-name").value.trim(),
+                hospitalId: document.getElementById("em-hid").value.trim(),
+                bloodGroup: document.getElementById("em-blood").value,
+                phone: document.getElementById("em-phone").value.trim(),
+                bloodCentre: document.getElementById("em-centre").value,
+                units: document.getElementById("em-units").value,
+                hospital: document.getElementById("em-hospital").value.trim(),
+                hospitalAddress: document.getElementById("em-hosp-addr").value.trim(),
+                permanentAddress: patientProfile.permanentAddress || document.getElementById("em-hosp-addr").value.trim()
+            };
+
+            PulseLinkBilling.startPayment(orderPayload, function (invoice) {
+                const boy = FAST_DELIVERY_BOYS[Math.floor(Math.random() * FAST_DELIVERY_BOYS.length)];
+                const newReq = {
+                    id: "PL-FAST-" + Math.floor(1000 + Math.random() * 9000),
+                    ...orderPayload,
+                    notes: "FAST EMERGENCY: Delivery boy picking blood packet from blood centre and rushing to hospital.",
+                    status: "courier",
+                    deliveryMode: "courier",
+                    courier: { name: boy.name, vehicle: boy.vehicle, phone: boy.phone, eta: boy.eta, step: 1 },
+                    donor: null,
+                    invoice: invoice,
+                    createdAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+                };
+
+                const all = getAllRequests();
+                all.unshift(newReq);
+                saveAllRequests(all);
+                document.getElementById("em-feedback").textContent =
+                    `✅ Paid via ${invoice.paymentMethod}! Fast Delivery Boy ${boy.name} dispatched.`;
+                renderRequests();
+            });
+        }
+
+        // OPTION 2: Payment First -> Send Live Alert to Logged-In Customers + Share PDF Bill
+        function proceedRealDonorPayment(event) {
+            event.preventDefault();
+
+            const orderPayload = {
+                requestType: "real_donor",
+                patientName: document.getElementById("rd-name").value.trim(),
+                hospitalId: document.getElementById("rd-hid").value.trim(),
+                bloodGroup: document.getElementById("rd-blood").value,
+                units: document.getElementById("rd-units").value,
+                phone: document.getElementById("rd-phone").value.trim(),
+                hospital: document.getElementById("rd-hospital").value.trim(),
+                permanentAddress: document.getElementById("rd-perm-addr").value.trim(),
+                hospitalAddress: document.getElementById("rd-hosp-addr").value.trim()
+            };
+
+            PulseLinkBilling.startPayment(orderPayload, function (invoice) {
+                const newReq = {
+                    id: "PL-DONOR-" + Math.floor(1000 + Math.random() * 9000),
+                    ...orderPayload,
+                    address: `${orderPayload.hospital}, ${orderPayload.hospitalAddress}`,
+                    urgency: "REAL DONOR NEEDED",
+                    notes: `Verified Patient • Hospital ID: ${orderPayload.hospitalId} • Permanent Addr: ${orderPayload.permanentAddress}`,
+                    status: "pending",
+                    deliveryMode: null,
+                    courier: null,
+                    donor: null,
+                    invoice: invoice,
+                    createdAt: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+                };
+
+                const all = getAllRequests();
+                all.unshift(newReq);
+                saveAllRequests(all);
+                document.getElementById("rd-feedback").textContent =
+                    `✅ Paid via ${invoice.paymentMethod}! Live alert & bill sent to logged-in Customers.`;
+                renderRequests();
+            });
+        }
+
+        function viewRequestBill(reqId) {
+            const req = getAllRequests().find(r => r.id === reqId);
+            if (req && req.invoice && window.PulseLinkBilling) {
+                PulseLinkBilling.viewInvoice(req.invoice);
+            }
+        }
+
+        function downloadRequestBill(reqId) {
+            const req = getAllRequests().find(r => r.id === reqId);
+            if (req && req.invoice && window.PulseLinkBilling) {
+                PulseLinkBilling.downloadPDF(req.invoice);
+            }
+        }
+
+        function advanceFastRider(reqId) {
+            const all = getAllRequests();
+            const req = all.find(r => r.id === reqId);
+            if (!req || !req.courier) return;
+            if (req.courier.step < 4) {
+                req.courier.step += 1;
+                if (req.courier.step === 4) req.status = "completed";
+                saveAllRequests(all);
+                renderRequests();
+            }
+        }
+
+        function deleteRequest(reqId) {
+            saveAllRequests(getAllRequests().filter(r => r.id !== reqId));
+            renderRequests();
+        }
+
+        function renderRequests() {
+            const all = getAllRequests();
+            const grid = document.getElementById("requests-grid");
+
+            if (all.length === 0) {
+                grid.innerHTML = `<div class="empty-state">No active blood requests yet. Use Option 1 or Option 2 above to pay & broadcast.</div>`;
+                return;
+            }
+
+            grid.innerHTML = all.slice(0, 8).map(req => {
+                const isFast = req.requestType === "emergency_delivery";
+                const stepLabels = ["", "1. Alert Sent to Rider", "2. Blood Taken at Centre", "3. Rushing to Hospital", "4. Given at Hospital"];
+                const curStep = (req.courier && req.courier.step) || 1;
+
+                const billBarHTML = req.invoice
+                    ? `
+                        <div class="paid-receipt-strip">
+                            <span>✅ Paid <strong>₹${Number(req.invoice.grandTotal).toFixed(2)}</strong> via ${req.invoice.paymentMethod}</span>
+                            <div style="display:flex; gap:6px;">
+                                <button type="button" class="btn-sm blue" onclick="viewRequestBill('${req.id}')">👁️ View Bill</button>
+                                <button type="button" class="btn-sm green" onclick="downloadRequestBill('${req.id}')">⬇️ PDF</button>
+                            </div>
+                        </div>
+                    `
+                    : "";
+
+                let statusBlock = "";
+                if (isFast && req.courier) {
+                    const nextBtn = curStep < 4
+                        ? `<button type="button" class="btn-sm green" style="margin-top:8px;" onclick="advanceFastRider('${req.id}')">Update Rider → ${stepLabels[curStep + 1]}</button>`
+                        : `<div style="color:#4ade80; font-weight:700; margin-top:6px;">✅ Blood Delivered to Patient Hospital!</div>`;
+
+                    statusBlock = `
+                        <div class="rider-status-box">
+                            <strong style="color:#4ade80;">🛵 Delivery Boy Assigned: ${req.courier.name}</strong> (${req.courier.phone})<br>
+                            <strong>Pickup From:</strong> ${req.bloodCentre || "Nearest Blood Centre"}<br>
+                            <strong>Deliver To:</strong> ${req.hospitalAddress || req.hospital} • <strong>ETA:</strong> ${req.courier.eta}
+                            <div class="rider-steps">
+                                <div class="r-step ${curStep >= 1 ? "active" : ""}">1. Notified</div>
+                                <div class="r-step ${curStep >= 2 ? "active" : ""}">2. At Centre</div>
+                                <div class="r-step ${curStep >= 3 ? "active" : ""}">3. In Transit</div>
+                                <div class="r-step ${curStep >= 4 ? "active" : ""}">4. Delivered</div>
+                            </div>
+                            ${nextBtn}
+                        </div>
+                    `;
+                } else if (req.donor) {
+                    statusBlock = `
+                        <div class="rider-status-box">
+                            <strong style="color:#4ade80;">✅ Real Donor Accepted: ${req.donor.name}</strong> (${req.donor.bloodGroup})<br>
+                            <strong>Donor Phone:</strong> ${req.donor.phone} • <strong>Mode:</strong> ${req.deliveryMode === "courier" ? "Long-Distance Rider" : "Direct Visit"}
+                        </div>
+                    `;
+                } else {
+                    statusBlock = `
+                        <div style="font-size:12.5px; color:#7dd3fc; font-weight:600;">
+                            🔔 Sent to Customers — waiting for a matching donor to verify & accept.
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="req-card ${isFast ? "fast-mode" : "donor-mode"}">
+                        <div class="req-head">
+                            <span class="blood-chip">🩸 ${req.bloodGroup} ${req.units ? "• " + req.units : ""}</span>
+                            <span class="mode-chip ${isFast ? "fast" : "donor"}">${isFast ? "Emergency Delivery Boy" : "Real Donor Alert"}</span>
+                        </div>
+                        <div class="req-info">
+                            <strong>Patient:</strong> ${req.patientName} • <strong>Hospital ID:</strong> ${req.hospitalId || "N/A"}<br>
+                            <strong>Phone:</strong> ${req.phone} • <strong>Hospital:</strong> ${req.hospital}<br>
+                            ${req.permanentAddress ? `<strong>Permanent Addr:</strong> ${req.permanentAddress}<br>` : ""}
+                            ${req.hospitalAddress ? `<strong>Hospital Addr:</strong> ${req.hospitalAddress}` : ""}
+                        </div>
+                        ${billBarHTML}
+                        ${statusBlock}
+                        <div style="display:flex; justify-content:flex-end;">
+                            <button type="button" class="btn-sm red" onclick="deleteRequest('${req.id}')">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function calcDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.25).toFixed(1);
+        }
+
+        function changeOriginArea() {
+            const val = document.getElementById("area-origin").value.split(",");
+            originCoords = { lat: parseFloat(val[0]), lng: parseFloat(val[1]) };
+            renderBloodCenters();
+        }
+
+        function useLiveGPS() {
+            if (!navigator.geolocation) {
+                alert("GPS is not supported on this browser.");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    originCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                    renderBloodCenters();
+                    alert("Live GPS location updated! Distances recalculated in km.");
+                },
+                () => alert("Could not access GPS. Choose your Visakhapatnam area from the dropdown.")
+            );
+        }
+
+        function renderBloodCenters() {
+            const q = (document.getElementById("center-search").value || "").toLowerCase().trim();
+            const list = VIZAG_BLOOD_CENTERS
+                .map(c => ({ ...c, km: parseFloat(calcDistanceKm(originCoords.lat, originCoords.lng, c.lat, c.lng)) }))
+                .filter(c => !q || c.name.toLowerCase().includes(q) || c.area.toLowerCase().includes(q) || c.address.toLowerCase().includes(q))
+                .sort((a, b) => a.km - b.km);
+
+            document.getElementById("blood-centers-grid").innerHTML = list.map(c => {
+                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ", " + c.address)}`;
+                return `
+                    <a href="${mapsLink}" target="_blank" rel="noopener noreferrer" class="center-card">
+                        <div>
+                            <div class="center-top">
+                                <h4>${c.name}</h4>
+                                <span class="km-badge">${c.km} km</span>
+                            </div>
+                            <div class="center-addr" style="margin-top:6px;">
+                                📍 ${c.address}<br>
+                                📞 ${c.phone}
+                            </div>
+                        </div>
+                        <div class="center-foot">
+                            <span>${c.area}</span>
+                            <span>Open Google Maps ↗</span>
+                        </div>
+                    </a>
+                `;
+            }).join("");
+        }
+
+        function logoutUser() {
+            localStorage.removeItem("pulseLinkActiveUser");
+            localStorage.removeItem("pulseLinkRole");
+            window.location.href = "index.html";
+        }
+
+        window.addEventListener("storage", function(e) {
+            if (e.key === "pulseLinkRequests") renderRequests();
+        });
+
+        loadPatientProfile();
+        renderRequests();
+        renderBloodCenters();
+    </script>
+
+    <!-- Pulse Link PDF Bill Generator Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="pulselink-billing.js"></script>
+
+</body>
+</html>

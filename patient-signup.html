@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Link | Patient Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- EmailJS SDK v4 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            if (typeof emailjs !== "undefined") {
+                emailjs.init({
+                    publicKey: "fLJERE1BUt5myCrcK"
+                });
+            }
+        })();
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+            color: #ffffff;
+            background-color: #0b0e14;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bg-wall {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(185, 28, 38, 0.28) 0%, rgba(20, 12, 18, 0.25) 38%, rgba(8, 11, 17, 0.85) 75%),
+                radial-gradient(circle at 12% 58%, rgba(170, 24, 34, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 88% 42%, rgba(92, 118, 148, 0.22) 0%, transparent 46%),
+                linear-gradient(125deg, #100c11 0%, #161b24 46%, #1f2734 100%);
+        }
+
+        .bg-wall::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(90deg, transparent 0%, transparent 29.8%, rgba(0, 0, 0, 0.55) 30%, rgba(255, 255, 255, 0.05) 30.2%, transparent 30.5%, transparent 72.8%, rgba(0, 0, 0, 0.6) 73%, rgba(255, 255, 255, 0.06) 73.2%, transparent 73.5%),
+                linear-gradient(180deg, transparent 0%, transparent 23.8%, rgba(0, 0, 0, 0.5) 24%, rgba(255, 255, 255, 0.05) 24.2%, transparent 24.5%, transparent 79.8%, rgba(0, 0, 0, 0.55) 80%, rgba(255, 255, 255, 0.04) 80.2%, transparent 80.5%);
+            opacity: 0.7;
+        }
+
+        .center-emblem-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .center-emblem-svg {
+            width: min(760px, 95vw);
+            height: auto;
+            opacity: 0.45;
+            filter: drop-shadow(0 0 38px rgba(255, 45, 58, 0.32));
+        }
+
+        .top-header {
+            position: relative;
+            z-index: 5;
+            padding: 24px 42px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(180deg, #ff9a9a 0%, #ff5757 52%, #e62e3d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 62, 72, 0.8));
+        }
+
+        .brand-heart-svg {
+            width: 48px;
+            height: 36px;
+            filter: drop-shadow(0 0 10px rgba(255, 60, 72, 0.85));
+        }
+
+        .back-pill {
+            padding: 9px 18px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(14, 17, 24, 0.65);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            transition: all 0.2s ease;
+        }
+
+        .back-pill:hover {
+            border-color: #ff6b74;
+            background: rgba(160, 32, 44, 0.35);
+        }
+
+        .signup-stage {
+            position: relative;
+            z-index: 5;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 20px 44px;
+        }
+
+        .signup-card {
+            position: relative;
+            width: 100%;
+            max-width: 540px;
+            background: linear-gradient(145deg, rgba(46, 52, 66, 0.48) 0%, rgba(19, 22, 30, 0.72) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            padding: 30px 28px 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.58), inset 0 0 24px rgba(255, 68, 82, 0.08);
+        }
+
+        .glow-edge {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 999px;
+        }
+
+        .glow-top {
+            top: -1.5px; left: 20%; right: 20%; height: 2.5px;
+            background: linear-gradient(90deg, transparent, #ff525e, #ffd1d4, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.85);
+        }
+
+        .glow-bottom {
+            bottom: -1.5px; left: 22%; right: 22%; height: 2.5px;
+            background: linear-gradient(90deg, transparent, #ff525e, #ffd1d4, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.8);
+        }
+
+        .glow-left {
+            left: -1.5px; top: 22%; bottom: 22%; width: 2.5px;
+            background: linear-gradient(180deg, transparent, #ff525e, #ffc9ce, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.8);
+        }
+
+        .glow-right {
+            right: -1.5px; top: 24%; bottom: 24%; width: 2.5px;
+            background: linear-gradient(180deg, transparent, #ff525e, #ffc9ce, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.78);
+        }
+
+        .card-heading {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(226, 232, 240, 0.82);
+            margin-bottom: 22px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 13px;
+        }
+
+        .field-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field-wrap.full {
+            grid-column: 1 / -1;
+        }
+
+        .field-wrap label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 224, 226, 0.9);
+            letter-spacing: 0.4px;
+        }
+
+        .field-input,
+        .field-select {
+            width: 100%;
+            height: 43px;
+            padding: 0 13px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .field-select option {
+            background-color: #161b24;
+            color: #ffffff;
+        }
+
+        .field-input::placeholder {
+            color: rgba(226, 232, 240, 0.62);
+        }
+
+        .field-input:focus,
+        .field-select:focus {
+            border-color: #ff6b74;
+            box-shadow: 0 0 12px rgba(255, 65, 80, 0.35);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 46px;
+            margin-top: 18px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 118, 126, 0.6);
+            background: linear-gradient(135deg, rgba(180, 48, 56, 0.92) 0%, rgba(122, 30, 40, 0.94) 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(220, 38, 52, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, rgba(214, 52, 64, 0.96) 0%, rgba(145, 30, 42, 0.96) 100%);
+            box-shadow: 0 0 22px rgba(255, 62, 74, 0.58);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-status {
+            min-height: 20px;
+            margin-top: 11px;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .form-status.info { color: #ffd1d4; }
+        .form-status.error { color: #ff8a92; }
+        .form-status.success { color: #6ee7b7; }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        .footer-link a {
+            color: #ff7a82;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .top-header {
+                padding: 18px 18px 6px;
+            }
+            .brand-text {
+                font-size: 21px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .signup-card {
+                padding: 24px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-wall" aria-hidden="true"></div>
+
+    <div class="center-emblem-layer" aria-hidden="true">
+        <svg class="center-emblem-svg" viewBox="0 0 900 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="pulseGlow" x="-30%" y="-80%" width="160%" height="260%">
+                    <feGaussianBlur stdDeviation="6" result="blur1" />
+                    <feMerge>
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <linearGradient id="ecgBeam" x1="120" y1="295" x2="780" y2="295" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ff3b47" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.95" />
+                    <stop offset="100%" stop-color="#ff3b47" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+            <path d="M120 295 L 368 295 L 392 245 L 414 342 L 444 176 L 478 386 L 506 254 L 528 314 L 548 295 L 780 295"
+                  stroke="#ff3442" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" filter="url(#pulseGlow)" />
+            <path d="M120 295 L 368 295 L 392 245 L 414 342 L 444 176 L 478 386 L 506 254 L 528 314 L 548 295 L 780 295"
+                  stroke="url(#ecgBeam)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#pulseGlow)" />
+        </svg>
+    </div>
+
+    <header class="top-header">
+        <a href="index.html" class="brand-logo">
+            <span class="brand-text">PULSE LINK</span>
+            <svg class="brand-heart-svg" viewBox="0 0 64 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M27 40 C 27 40, 8 27, 8 15 C 8 8.5, 13.5 4, 19.5 5.5 C 23 6.4, 25.5 9, 27 11.5 C 28.5 9, 31 6.4, 34.5 5.5 C 40.5 4, 46 8.5, 46 15 C 46 27, 27 40, 27 40 Z" fill="#ff4d57" />
+                <path d="M2 23 L 15 23 L 19 16 L 23 30 L 28 11 L 33 28 L 37 21 L 41 23 L 52 23" stroke="#180a0d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </a>
+        <a href="index.html" class="back-pill">← Back to Login</a>
+    </header>
+
+    <main class="signup-stage">
+        <section class="signup-card">
+            <span class="glow-edge glow-top"></span>
+            <span class="glow-edge glow-bottom"></span>
+            <span class="glow-edge glow-left"></span>
+            <span class="glow-edge glow-right"></span>
+
+            <h1 class="card-heading">PATIENT SIGN IN</h1>
+            <p class="card-subtitle">Create a Patient account to post emergency blood requests & track donors</p>
+
+            <form id="patient-signup-form">
+                <div class="form-grid">
+                    <div class="field-wrap">
+                        <label for="pat-name">Patient Name (Login Name) *</label>
+                        <input type="text" id="pat-name" class="field-input" placeholder="e.g. Suresh Kumar" required>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label for="pat-blood">Blood Group Needed *</label>
+                        <select id="pat-blood" class="field-select" required>
+                            <option value="">Select Blood Group</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label for="pat-email">Email Address *</label>
+                        <input type="email" id="pat-email" class="field-input" placeholder="patient@gmail.com" required>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label for="pat-phone">Emergency Mobile Number *</label>
+                        <input type="tel" id="pat-phone" class="field-input" placeholder="10-digit mobile number" maxlength="15" required>
+                    </div>
+
+                    <div class="field-wrap full">
+                        <label for="pat-hospital">Hospital Name *</label>
+                        <input type="text" id="pat-hospital" class="field-input" placeholder="e.g. Apollo Hospital / KGH / Care Hospital" required>
+                    </div>
+
+                    <div class="field-wrap full">
+                        <label for="pat-address">Hospital / Patient Full Address *</label>
+                        <input type="text" id="pat-address" class="field-input" placeholder="Ward/Room, Hospital Road, Area, City, Pincode" required>
+                    </div>
+
+                    <div class="field-wrap full">
+                        <label for="pat-password">Create Password *</label>
+                        <input type="password" id="pat-password" class="field-input" placeholder="Enter a secure password" minlength="4" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="pat-submit-btn" class="submit-btn">CREATE PATIENT ACCOUNT</button>
+                <div id="signup-status" class="form-status"></div>
+            </form>
+
+            <p class="footer-link">
+                Already registered? <a href="index.html">Login here</a> | Want to donate blood? <a href="customer-signup.html">Customer Sign In</a>
+            </p>
+        </section>
+    </main>
+
+    <script>
+        const EMAILJS_PUBLIC_KEY = "fLJERE1BUt5myCrcK";
+        const EMAILJS_SERVICE_ID = "service_sha5bse";
+        const EMAILJS_TEMPLATE_ID = "template_230ai4q";
+
+        function setStatus(message, type) {
+            const el = document.getElementById("signup-status");
+            el.className = "form-status " + type;
+            el.textContent = message;
+        }
+
+        document.getElementById("patient-signup-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("pat-name").value.trim();
+            const bloodGroup = document.getElementById("pat-blood").value;
+            const email = document.getElementById("pat-email").value.trim();
+            const phone = document.getElementById("pat-phone").value.trim();
+            const hospital = document.getElementById("pat-hospital").value.trim();
+            const address = document.getElementById("pat-address").value.trim();
+            const password = document.getElementById("pat-password").value;
+            const btn = document.getElementById("pat-submit-btn");
+
+            if (!name || !bloodGroup || !email || !phone || !hospital || !address || !password) {
+                setStatus("Please fill in all required fields.", "error");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "CREATING ACCOUNT & SENDING EMAIL...";
+            setStatus("Sending welcome email to " + email + "...", "info");
+
+            const patients = JSON.parse(localStorage.getItem("pulseLinkPatients") || "[]");
+            const newPatient = {
+                id: "PAT-" + Math.floor(10000 + Math.random() * 90000),
+                name: name,
+                username: name,
+                bloodGroup: bloodGroup,
+                email: email,
+                phone: phone,
+                hospital: hospital,
+                address: address,
+                password: password,
+                role: "patient",
+                createdAt: new Date().toLocaleString("en-IN")
+            };
+
+            const existingIdx = patients.findIndex(u =>
+                (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
+                (u.name && u.name.toLowerCase() === name.toLowerCase())
+            );
+
+            if (existingIdx >= 0) {
+                patients[existingIdx] = newPatient;
+            } else {
+                patients.unshift(newPatient);
+            }
+
+            localStorage.setItem("pulseLinkPatients", JSON.stringify(patients));
+            localStorage.setItem("pulseLinkRole", "patient");
+            localStorage.setItem("pulseLinkActiveUser", JSON.stringify(newPatient));
+
+            if (typeof emailjs === "undefined") {
+                setStatus("EmailJS could not load. Check your internet connection.", "error");
+                alert("Account saved locally, but an internet connection is required to send the welcome email.");
+                btn.disabled = false;
+                btn.textContent = "CREATE PATIENT ACCOUNT";
+                return;
+            }
+
+            emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                {
+                    to_name: name,
+                    to_email: email,
+                    role: "Patient (Blood Recipient)",
+                    blood_group: bloodGroup
+                },
+                { publicKey: EMAILJS_PUBLIC_KEY }
+            )
+            .then(function() {
+                setStatus("Welcome email sent successfully!", "success");
+                alert("Patient account created successfully! Welcome email sent to " + email);
+                window.location.href = "patient-home.html";
+            })
+            .catch(function(error) {
+                const reason = (error && (error.text || error.message)) ? (error.text || error.message) : "Unknown EmailJS error";
+                console.error("EmailJS Error:", error);
+                setStatus("Email failed: " + reason, "error");
+                alert("Could not send email: " + reason);
+                btn.disabled = false;
+                btn.textContent = "CREATE PATIENT ACCOUNT";
+            });
+        });
+    </script>
+
+</body>
+</html>

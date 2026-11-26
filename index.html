@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse Link | Blood Connect Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+            color: #ffffff;
+            background-color: #0b0e14;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================
+           DARK METALLIC PANEL BACKGROUND
+        ========================================= */
+        .bg-wall {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(185, 28, 38, 0.28) 0%, rgba(20, 12, 18, 0.25) 38%, rgba(8, 11, 17, 0.85) 75%),
+                radial-gradient(circle at 12% 58%, rgba(170, 24, 34, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 88% 42%, rgba(92, 118, 148, 0.22) 0%, transparent 46%),
+                linear-gradient(125deg, #100c11 0%, #161b24 46%, #1f2734 100%);
+        }
+
+        /* Subtle Industrial Metal Seams & Mesh Strip */
+        .bg-wall::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(90deg, transparent 0%, transparent 29.8%, rgba(0, 0, 0, 0.55) 30%, rgba(255, 255, 255, 0.05) 30.2%, transparent 30.5%, transparent 72.8%, rgba(0, 0, 0, 0.6) 73%, rgba(255, 255, 255, 0.06) 73.2%, transparent 73.5%),
+                linear-gradient(180deg, transparent 0%, transparent 23.8%, rgba(0, 0, 0, 0.5) 24%, rgba(255, 255, 255, 0.05) 24.2%, transparent 24.5%, transparent 79.8%, rgba(0, 0, 0, 0.55) 80%, rgba(255, 255, 255, 0.04) 80.2%, transparent 80.5%);
+            opacity: 0.7;
+        }
+
+        /* Dark Carbon Center Strip Behind Pulse */
+        .bg-wall::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 155px;
+            background:
+                repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.25) 0 2px, transparent 2px 5px),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55));
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0.72;
+        }
+
+        /* =========================================
+           CENTRAL BLOOD DROP + HEART + ECG EMBLEM
+        ========================================= */
+        .center-emblem-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .center-emblem-svg {
+            width: min(760px, 95vw);
+            height: auto;
+            opacity: 0.92;
+            filter: drop-shadow(0 0 38px rgba(255, 45, 58, 0.32));
+        }
+
+        /* =========================================
+           TOP-LEFT PULSE LINK BRAND HEADER
+        ========================================= */
+        .top-header {
+            position: relative;
+            z-index: 5;
+            padding: 28px 42px 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 31px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #ff6b6b;
+            background: linear-gradient(180deg, #ff9a9a 0%, #ff5757 52%, #e62e3d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 62, 72, 0.8)) drop-shadow(0 0 26px rgba(255, 30, 45, 0.45));
+        }
+
+        .brand-heart-svg {
+            width: 52px;
+            height: 38px;
+            filter: drop-shadow(0 0 10px rgba(255, 60, 72, 0.85));
+        }
+
+        /* =========================================
+           DUAL LOGIN PORTALS LAYOUT
+        ========================================= */
+        .portals-stage {
+            position: relative;
+            z-index: 5;
+            flex: 1;
+            width: 100%;
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 18px 64px 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .portal-column {
+            width: 100%;
+            max-width: 318px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Frosted Glass Login Card */
+        .login-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(46, 52, 66, 0.42) 0%, rgba(19, 22, 30, 0.62) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            padding: 28px 26px 26px;
+            box-shadow:
+                0 18px 46px rgba(0, 0, 0, 0.55),
+                inset 0 0 24px rgba(255, 68, 82, 0.08);
+        }
+
+        /* Luminous Red Edge Flares on Glass Cards */
+        .glow-edge {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 999px;
+        }
+
+        .glow-top {
+            top: -1.5px;
+            left: 20%;
+            right: 20%;
+            height: 2.5px;
+            background: linear-gradient(90deg, transparent, #ff525e, #ffd1d4, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.85);
+        }
+
+        .glow-bottom {
+            bottom: -1.5px;
+            left: 22%;
+            right: 22%;
+            height: 2.5px;
+            background: linear-gradient(90deg, transparent, #ff525e, #ffd1d4, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.8);
+        }
+
+        .glow-left {
+            left: -1.5px;
+            top: 22%;
+            bottom: 22%;
+            width: 2.5px;
+            background: linear-gradient(180deg, transparent, #ff525e, #ffc9ce, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.8);
+        }
+
+        .glow-right {
+            right: -1.5px;
+            top: 24%;
+            bottom: 24%;
+            width: 2.5px;
+            background: linear-gradient(180deg, transparent, #ff525e, #ffc9ce, #ff525e, transparent);
+            box-shadow: 0 0 14px 2px rgba(255, 58, 72, 0.78);
+        }
+
+        .card-heading {
+            text-align: center;
+            font-size: 20.5px;
+            font-weight: 700;
+            letter-spacing: 0.9px;
+            color: #ffffff;
+            margin-bottom: 22px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Input Boxes with Thin Icons */
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.44);
+            border-radius: 7px;
+            padding: 0 13px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .input-group:focus-within {
+            border-color: #ff6b74;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 14px rgba(255, 65, 80, 0.35);
+        }
+
+        .input-icon {
+            width: 17px;
+            height: 17px;
+            color: rgba(255, 255, 255, 0.78);
+            flex-shrink: 0;
+            margin-right: 11px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(236, 240, 248, 0.76);
+        }
+
+        /* Crimson Glass LOGIN Button */
+        .login-btn {
+            width: 100%;
+            height: 44px;
+            margin-top: 8px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 118, 126, 0.55);
+            background: linear-gradient(135deg, rgba(168, 52, 58, 0.88) 0%, rgba(122, 34, 42, 0.88) 55%, rgba(92, 26, 36, 0.9) 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 15.5px;
+            font-weight: 500;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(220, 38, 52, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, rgba(204, 54, 64, 0.95) 0%, rgba(145, 32, 44, 0.95) 100%);
+            box-shadow: 0 0 22px rgba(255, 62, 74, 0.55);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Status Feedback inside Card */
+        .form-status {
+            min-height: 18px;
+            margin-top: 10px;
+            font-size: 12.5px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .form-status.error { color: #ff8a92; }
+        .form-status.success { color: #6ee7b7; }
+
+        /* Matching Outlined SIGN IN Buttons Below Each Card */
+        .signin-outline-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            background: rgba(14, 17, 24, 0.66);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 15.5px;
+            font-weight: 500;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            transition: all 0.2s ease;
+        }
+
+        .signin-outline-btn:hover {
+            border-color: #ff6b74;
+            background: rgba(160, 32, 44, 0.34);
+            box-shadow: 0 0 18px rgba(255, 62, 74, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           RESPONSIVE FOR TABLET & MOBILE
+        ========================================= */
+        @media (max-width: 920px) {
+            .top-header {
+                padding: 22px 24px 8px;
+                justify-content: center;
+            }
+
+            .brand-text {
+                font-size: 26px;
+            }
+
+            .portals-stage {
+                flex-direction: column;
+                justify-content: center;
+                padding: 20px 20px 44px;
+                gap: 34px;
+            }
+
+            .portal-column {
+                max-width: 360px;
+                gap: 18px;
+            }
+
+            .center-emblem-svg {
+                opacity: 0.45;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Dark Metallic Wall -->
+    <div class="bg-wall" aria-hidden="true"></div>
+
+    <!-- Central Blurred Red Blood-Drop, Heart & Glowing ECG Pulse Emblem -->
+    <div class="center-emblem-layer" aria-hidden="true">
+        <svg class="center-emblem-svg" viewBox="0 0 900 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="softEmblemBlur" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="4.5" />
+                </filter>
+                <filter id="pulseGlow" x="-30%" y="-80%" width="160%" height="260%">
+                    <feGaussianBlur stdDeviation="7" result="blur1" />
+                    <feGaussianBlur stdDeviation="2.5" result="blur2" />
+                    <feMerge>
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <linearGradient id="dropGrad" x1="280" y1="60" x2="620" y2="520" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#8b1018" />
+                    <stop offset="42%" stop-color="#df2938" />
+                    <stop offset="78%" stop-color="#ff4b58" />
+                    <stop offset="100%" stop-color="#7a0d16" />
+                </linearGradient>
+                <radialGradient id="heartCore" cx="50%" cy="46%" r="54%">
+                    <stop offset="0%" stop-color="#ff5e68" stop-opacity="0.92" />
+                    <stop offset="65%" stop-color="#b91623" stop-opacity="0.72" />
+                    <stop offset="100%" stop-color="#4e060c" stop-opacity="0.25" />
+                </radialGradient>
+                <linearGradient id="ecgBeam" x1="120" y1="295" x2="780" y2="295" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ff3b47" stop-opacity="0" />
+                    <stop offset="22%" stop-color="#ff6b73" stop-opacity="0.9" />
+                    <stop offset="50%" stop-color="#ffffff" stop-opacity="1" />
+                    <stop offset="78%" stop-color="#ff6b73" stop-opacity="0.9" />
+                    <stop offset="100%" stop-color="#ff3b47" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+
+            <!-- Soft Outer Red Blood-Drop / Ribbon Silhouette -->
+            <g filter="url(#softEmblemBlur)" opacity="0.78">
+                <path d="M446 38 C 446 38, 290 215, 290 342 C 290 442, 366 518, 464 518 C 562 518, 636 445, 636 346 C 636 278, 594 222, 540 185 C 584 148, 578 96, 520 96 C 452 96, 422 152, 434 218"
+                      stroke="url(#dropGrad)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <path d="M454 64 C 378 158, 326 244, 326 336 C 326 420, 386 482, 466 482 C 544 482, 598 424, 598 344 C 598 286, 560 238, 502 214"
+                      stroke="#ff4b58" stroke-width="10" stroke-linecap="round" opacity="0.5" fill="none" />
+
+                <!-- Inner Translucent Red Heart -->
+                <path d="M454 434 C 454 434, 356 364, 356 286 C 356 240, 392 212, 426 226 C 442 232, 450 246, 454 258 C 458 246, 466 232, 482 226 C 516 212, 552 240, 552 286 C 552 364, 454 434, 454 434 Z"
+                      fill="url(#heartCore)" stroke="#ff6670" stroke-width="8" />
+            </g>
+
+            <!-- Glowing White/Red ECG Heartbeat Pulse Across Center -->
+            <path d="M120 295 L 368 295 L 392 245 L 414 342 L 444 176 L 478 386 L 506 254 L 528 314 L 548 295 L 780 295"
+                  stroke="#ff3442" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity="0.65" filter="url(#pulseGlow)" />
+            <path d="M120 295 L 368 295 L 392 245 L 414 342 L 444 176 L 478 386 L 506 254 L 528 314 L 548 295 L 780 295"
+                  stroke="url(#ecgBeam)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#pulseGlow)" />
+        </svg>
+    </div>
+
+    <!-- Top-Left Brand Header -->
+    <header class="top-header">
+        <a href="index.html" class="brand-logo">
+            <span class="brand-text">PULSE LINK</span>
+            <svg class="brand-heart-svg" viewBox="0 0 64 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="logoHeartGrad" x1="10" y1="4" x2="46" y2="42" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#ff9999" />
+                        <stop offset="55%" stop-color="#ff4d57" />
+                        <stop offset="100%" stop-color="#d61f2c" />
+                    </linearGradient>
+                </defs>
+                <path d="M27 40 C 27 40, 8 27, 8 15 C 8 8.5, 13.5 4, 19.5 5.5 C 23 6.4, 25.5 9, 27 11.5 C 28.5 9, 31 6.4, 34.5 5.5 C 40.5 4, 46 8.5, 46 15 C 46 27, 27 40, 27 40 Z"
+                      fill="url(#logoHeartGrad)" />
+                <path d="M2 23 L 15 23 L 19 16 L 23 30 L 28 11 L 33 28 L 37 21 L 41 23 L 52 23"
+                      stroke="#180a0d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M47 23 L 54 23" stroke="#ff7c82" stroke-width="2" stroke-linecap="round" />
+                <path d="M58 25.5 C 58 25.5, 54.5 23.2, 54.5 21.1 C 54.5 19.9, 55.5 19.1, 56.6 19.4 C 57.3 19.6, 57.8 20.1, 58 20.6 C 58.2 20.1, 58.7 19.6, 59.4 19.4 C 60.5 19.1, 61.5 19.9, 61.5 21.1 C 61.5 23.2, 58 25.5, 58 25.5 Z"
+                      fill="#ff8d92" />
+            </svg>
+        </a>
+    </header>
+
+    <!-- Main Dual Login Portals -->
+    <main class="portals-stage">
+
+        <!-- LEFT: CUSTOMER (DONOR) PORTAL -->
+        <section class="portal-column">
+            <div class="login-card">
+                <span class="glow-edge glow-top"></span>
+                <span class="glow-edge glow-bottom"></span>
+                <span class="glow-edge glow-left"></span>
+                <span class="glow-edge glow-right"></span>
+
+                <h2 class="card-heading">CUSTOMER LOGIN</h2>
+
+                <form id="customer-login-form" onsubmit="handleCustomerLogin(event)">
+                    <div class="input-group">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input type="text" id="cust-login-name" placeholder="Login Name" autocomplete="username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="7.5" cy="15.5" r="4.5"></circle>
+                            <path d="M21 2l-9.6 9.6"></path>
+                            <path d="M15.5 7.5l3 3L22 7l-3-3"></path>
+                        </svg>
+                        <input type="password" id="cust-login-pass" placeholder="Password" autocomplete="current-password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">LOGIN</button>
+                    <div id="cust-status" class="form-status"></div>
+                </form>
+            </div>
+
+            <a href="customer-signup.html" class="signin-outline-btn">CUSTOMER SIGN IN</a>
+        </section>
+
+        <!-- RIGHT: PATIENT PORTAL -->
+        <section class="portal-column">
+            <div class="login-card">
+                <span class="glow-edge glow-top"></span>
+                <span class="glow-edge glow-bottom"></span>
+                <span class="glow-edge glow-left"></span>
+                <span class="glow-edge glow-right"></span>
+
+                <h2 class="card-heading">PATIENT LOGIN</h2>
+
+                <form id="patient-login-form" onsubmit="handlePatientLogin(event)">
+                    <div class="input-group">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input type="text" id="pat-login-name" placeholder="Login Name" autocomplete="username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="7.5" cy="15.5" r="4.5"></circle>
+                            <path d="M21 2l-9.6 9.6"></path>
+                            <path d="M15.5 7.5l3 3L22 7l-3-3"></path>
+                        </svg>
+                        <input type="password" id="pat-login-pass" placeholder="Password" autocomplete="current-password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">LOGIN</button>
+                    <div id="pat-status" class="form-status"></div>
+                </form>
+            </div>
+
+            <a href="patient-signup.html" class="signin-outline-btn">PATIENT SIGN IN</a>
+        </section>
+
+    </main>
+
+    <script>
+        function setStatus(id, message, type) {
+            const el = document.getElementById(id);
+            el.className = "form-status " + type;
+            el.textContent = message;
+        }
+
+        /* =========================================
+           CUSTOMER (DONOR) LOGIN HANDLER
+        ========================================= */
+        function handleCustomerLogin(event) {
+            event.preventDefault();
+            const loginInput = document.getElementById("cust-login-name").value.trim();
+            const password = document.getElementById("cust-login-pass").value;
+
+            if (!loginInput || !password) {
+                setStatus("cust-status", "Please enter your Login Name and Password.", "error");
+                return;
+            }
+
+            const customers = JSON.parse(localStorage.getItem("pulseLinkCustomers") || "[]");
+            const matched = customers.find(u =>
+                (u.name && u.name.toLowerCase() === loginInput.toLowerCase()) ||
+                (u.email && u.email.toLowerCase() === loginInput.toLowerCase()) ||
+                (u.username && u.username.toLowerCase() === loginInput.toLowerCase())
+            );
+
+            if (matched && matched.password && matched.password !== password) {
+                setStatus("cust-status", "Incorrect password. Please try again.", "error");
+                return;
+            }
+
+            const activeCustomer = matched || {
+                name: loginInput,
+                email: loginInput.includes("@") ? loginInput : "",
+                bloodGroup: "O+",
+                phone: "",
+                address: "",
+                role: "customer"
+            };
+
+            localStorage.setItem("pulseLinkRole", "customer");
+            localStorage.setItem("pulseLinkActiveUser", JSON.stringify(activeCustomer));
+            setStatus("cust-status", "Login successful! Opening Customer Dashboard...", "success");
+
+            setTimeout(() => {
+                window.location.href = "customer-home.html";
+            }, 450);
+        }
+
+        /* =========================================
+           PATIENT LOGIN HANDLER
+        ========================================= */
+        function handlePatientLogin(event) {
+            event.preventDefault();
+            const loginInput = document.getElementById("pat-login-name").value.trim();
+            const password = document.getElementById("pat-login-pass").value;
+
+            if (!loginInput || !password) {
+                setStatus("pat-status", "Please enter your Login Name and Password.", "error");
+                return;
+            }
+
+            const patients = JSON.parse(localStorage.getItem("pulseLinkPatients") || "[]");
+            const matched = patients.find(u =>
+                (u.name && u.name.toLowerCase() === loginInput.toLowerCase()) ||
+                (u.email && u.email.toLowerCase() === loginInput.toLowerCase()) ||
+                (u.username && u.username.toLowerCase() === loginInput.toLowerCase())
+            );
+
+            if (matched && matched.password && matched.password !== password) {
+                setStatus("pat-status", "Incorrect password. Please try again.", "error");
+                return;
+            }
+
+            const activePatient = matched || {
+                name: loginInput,
+                email: loginInput.includes("@") ? loginInput : "",
+                bloodGroup: "O+",
+                phone: "",
+                hospital: "",
+                address: "",
+                role: "patient"
+            };
+
+            localStorage.setItem("pulseLinkRole", "patient");
+            localStorage.setItem("pulseLinkActiveUser", JSON.stringify(activePatient));
+            setStatus("pat-status", "Login successful! Opening Patient Dashboard...", "success");
+
+            setTimeout(() => {
+                window.location.href = "patient-home.html";
+            }, 450);
+        }
+    </script>
+
+</body>
+</html>
