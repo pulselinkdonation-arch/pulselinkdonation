@@ -6,7 +6,7 @@
     <title>Pulse Link | Blood Connect Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -334,6 +334,38 @@
             transform: translateY(-1px);
         }
 
+        /* Credit Footer */
+        .pl-credit-footer {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            padding: 15px 20px;
+            text-align: center;
+            background: rgba(12, 15, 23, 0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 82, 94, 0.35);
+            box-shadow: 0 -6px 24px rgba(220, 38, 52, 0.16);
+            color: #f8fafc;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 13.5px;
+            line-height: 1.65;
+        }
+
+        .pl-credit-footer .pl-credit-name {
+            font-family: 'Cinzel', Georgia, serif;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+            color: #ff7b82;
+            text-shadow: 0 0 12px rgba(255, 77, 87, 0.45);
+        }
+
+        .pl-credit-footer .pl-credit-college {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            color: #fecdd3;
+        }
+
         /* =========================================
            RESPONSIVE FOR TABLET & MOBILE
         ========================================= */
@@ -525,6 +557,10 @@
         </section>
 
     </main>
+
+    <footer class="pl-credit-footer">
+        This website is designed and developed by <span class="pl-credit-name">PRABHU CHARAN</span> from <span class="pl-credit-college">VISAKHA INSTITUTE OF ENGINEERING &amp; TECHNOLOGY</span>.
+    </footer>
 
     <script>
         function setStatus(id, message, type) {
